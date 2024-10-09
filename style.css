@@ -1,0 +1,33 @@
+.table td{
+ padding: 1rem;
+ margin: 0;
+ display: table-cell;
+ text-align: center;
+}
+.table th{
+    text-align: center;
+}
+.table td:hover{
+    
+    box-shadow:inset 0 0 0 1px #ccc;
+}
+
+.selected{
+    box-shadow: inset 0 0 0 1px dodgerblue !important;
+}
+
+.text-body-secondary{
+    opacity: 0.5;
+}
+.date{
+ display: flex;
+ flex-direction: column;
+ row-gap: 0.25rem;
+}
+
+.calendar-event{
+   max-width: 100%;
+}
+.pr-5{
+    padding-right: 1rem !important;
+}
