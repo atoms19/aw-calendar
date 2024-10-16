@@ -25,7 +25,7 @@ let events=await localforage.getItem('events') || [{
     
 },{
     date:'16-10-2024',
-    name:'date',
+    name:'submission ',
     type:'primary',
     isTask:false,
     subtasts:[]
@@ -146,6 +146,24 @@ let eventConfigClose=document.querySelector("#close-event")
 let offCanvasEvent=document.querySelector('#offcanvas-event-config')
 
 
+let colorInput=document.querySelector('#color-input')
+
+colorInput.addEventListener('change',()=>{
+    if(selectedEvent){
+        events.forEach(e=>{
+            if(e==selectedEvent){
+                e.type=colorInput.value
+            }
+        })
+        colorInput.classList.remove('bg-'+colorInput.value)
+        localforage.setItem('events',events)
+        
+        updateEventList()
+        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+        
+    }
+})
+
 eventConfigClose.addEventListener("click",()=>{
     offCanvasEvent.classList.remove('show')
 
@@ -238,11 +256,12 @@ function updateEventList(){
 
 
 
+selectedEvent;
 
-
-function openEvent(){
+function openEvent(te){
     offCanvasEvent.classList.add('show')
     console.log('event has been opened ')
+    selectedEvent=te
 
 }
 
