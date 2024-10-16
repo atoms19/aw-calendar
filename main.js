@@ -227,7 +227,8 @@ function updateEventList(){
             let deleteBtn=document.createElement('button')
             deleteBtn.classList.add('btn','btn-'+te.type)
             deleteBtn.innerHTML='<i class="bi bi-trash"></i>'
-            deleteBtn.onclick=()=>{
+            deleteBtn.onclick=(e)=>{
+                e.stopPropagation()
                 events=events.filter((e)=>e.name!=te.name)
                 localforage.setItem('events',events)
                 updateEventList()
