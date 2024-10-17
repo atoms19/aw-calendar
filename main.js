@@ -255,19 +255,36 @@ function updateEventList(){
 
 
 
+let noteTextarea=document.querySelector('#note-text')
 
-
-selectedEvent;
+let selectedEvent;
 
 function openEvent(te){
     offCanvasEvent.classList.add('show')
     console.log('event has been opened ')
     selectedEvent=te
 
+    noteTextarea.value=te.note ||''
+    colorInput.value=te.type
+
+
+
 }
 
+
+
+noteTextarea.addEventListener("input",()=>{
+    console.log(selectedEvent)
+    selectedEvent.note=noteTextarea.value
+    localforage.setItem('events',events)
+
+})
 
 
 }
 
 main()
+
+
+
+
