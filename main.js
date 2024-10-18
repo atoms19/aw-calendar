@@ -86,7 +86,12 @@ let currentDay=0
                     if(thisDate.getDate()==sampleDate.getDate() && thisDate.getMonth()==sampleDate.getMonth() && thisDate.getFullYear()==sampleDate.getFullYear()){
                         let badge=document.createElement('span')
                         badge.classList.add('badge','text-bg-'+event.type)
-                        badge.innerHTML=event.name
+                        if(window.innerWidth>=1000){
+                            badge.innerHTML=event.name
+                        }else{
+                            badge.innerHTML='ㅤ'
+                            
+                        }
                         elem1.appendChild(badge)
                     }
                 
