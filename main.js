@@ -21,7 +21,8 @@ let events=await localforage.getItem('events') || [{
     type:'warning',
     isTask:false,
     subtasts:[],
-    notes:''
+    notes:'',
+    time:''
     
 },{
     date:'16-10-2024',
@@ -29,7 +30,8 @@ let events=await localforage.getItem('events') || [{
     type:'primary',
     isTask:false,
     subtasts:[]
-    ,notes:''
+    ,notes:'',
+    time:''
 
 },]
 console.log(events)
