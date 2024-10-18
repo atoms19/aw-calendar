@@ -274,19 +274,31 @@ function openEvent(te){
 
     noteTextarea.value=te.note ||''
     colorInput.value=te.type
+    noteDisplay.innerHTML=marked.parse(te.note)
 
 
 
 }
 
 
-
+let noteDisplay=document.querySelector("#note-display")
 noteTextarea.addEventListener("input",()=>{
     console.log(selectedEvent)
     selectedEvent.note=noteTextarea.value
     localforage.setItem('events',events)
+    noteDisplay.innerHTML=marked.parse(noteTextarea.value)
+    
 
 })
+
+
+
+let editBtn=document.querySelector('#edit-btn')
+editBtn.onclick=(e)=>{
+    e.preventDefault()
+    e.stopPropagation()
+    document.querySelector('#note-edit').classList.toggle('d-none')
+}
 
 
 }
