@@ -89,7 +89,10 @@ let currentDay=0
                         if(window.innerWidth>=1000){
                             badge.innerHTML=event.name
                         }else{
-                            badge.innerHTML='ㅤ'
+                            
+                            badge.innerHTML=' '
+                            
+
                             
                         }
                         elem1.appendChild(badge)
