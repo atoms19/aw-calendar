@@ -1,5 +1,5 @@
 async function  main(params) {
-    
+
 
 
 let calendarBody=document.querySelector("#calendar-body")
@@ -265,10 +265,12 @@ function openEvent(te){
     offCanvasEvent.classList.add('show')
     console.log('event has been opened ')
     selectedEvent=te
+    noteDisplay.innerHTML=''
 
     noteTextarea.value=te.note ||''
     colorInput.value=te.type
     noteDisplay.innerHTML=marked.parse(te.note)
+    renderMathInElement(noteDisplay)
     hljs.highlightAll()
 
 
@@ -281,13 +283,14 @@ noteTextarea.addEventListener("input",()=>{
     selectedEvent.note=noteTextarea.value
     localforage.setItem('events',events)
     noteDisplay.innerHTML=marked.parse(noteTextarea.value)
+    renderMathInElement(noteDisplay)
     hljs.highlightAll()
 
 })
 
 
 //solution was from stack overflow
-noteDisplay.addEventListener('keydown', function(e) {
+noteTextarea.addEventListener('keydown', function(e) {
     if (e.key == 'Tab') {
       e.preventDefault();
       var start = this.selectionStart;
