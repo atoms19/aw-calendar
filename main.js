@@ -88,15 +88,7 @@ let currentDay=0
                     if(thisDate.getDate()==sampleDate.getDate() && thisDate.getMonth()==sampleDate.getMonth() && thisDate.getFullYear()==sampleDate.getFullYear()){
                         let badge=document.createElement('span')
                         badge.classList.add('badge','text-bg-'+event.type)
-                        if(window.innerWidth>=1000){
-                            badge.innerHTML=event.name
-                        }else{
-                            
-                            badge.innerHTML=' '
-                            
-
-                            
-                        }
+                        badge.innerHTML=event.name
                         elem1.appendChild(badge)
                     }
                 
@@ -302,6 +294,19 @@ editBtn.onclick=(e)=>{
     document.querySelector('#note-edit').classList.toggle('d-none')
 }
 
+let fb=document.getElementById('calendar-table')
+let ts=new swipeDetector(fb)
+
+fb.addEventListener('swipeup',()=>{
+    console.log('swipe up')
+    currentDate.setMonth(currentDate.getMonth()-1)
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+})
+
+fb.addEventListener('swipedown',()=>{
+    currentDate.setMonth(currentDate.getMonth()+1)
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+})
 
 }
 
@@ -309,4 +314,50 @@ main()
 
 
 
+class swipeDetector{
+    constructor(elem){
+        this.elem=elem
+        this.elem.addEventListener('touchstart',this.start.bind(this))
+        this.elem.addEventListener('touchmove', (e)=>{
+            e.preventDefault() 
+        }, false)
+        this.elem.addEventListener('touchend',this.end.bind(this))
+        this.allowedTime=300
+        this.allowedDistX=150
+        this.allowedDistY=100
+        
+    }
+
+    start(e){
+        this.startX=e.touches[0].clientX
+        this.startY=e.touches[0].clientY
+        this.startTime=Date.now()
+       
+    
+    }
+
+    end(e){
+        this.endX=e.changedTouches[0].clientX
+        this.endY=e.changedTouches[0].clientY
+        this.endTime=Date.now()
+        this.deltaX=this.endX-this.startX
+        this.deltaY=this.endY-this.startY
+        this.deltaT=this.endTime-this.startTime
+
+        
+
+        if(Math.abs(this.deltaX)>this.allowedDistX && Math.abs(this.deltaY)>this.allowedDistY && this.deltaT<=this.allowedTime){
+            if(this.deltaX>0){
+                this.elem.dispatchEvent(new CustomEvent('swipeleft'))
+    }else{
+        this.elem.dispatchEvent(new CustomEvent('swiperight'))
+    }
+
+    if(this.deltaY>0){
+        this.elem.dispatchEvent(new CustomEvent('swipeup'))
+    }else if(this.deltaY<0){
+        this.elem.dispatchEvent(new CustomEvent('swipedown'))
+    }
+        }
+    }}
 

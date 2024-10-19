@@ -10,6 +10,7 @@
 .table td:hover{
     
     box-shadow:inset 0 0 0 1px #ccc;
+    text-align: center;
 }
 
 .selected{
@@ -23,11 +24,28 @@
  display: flex;
  flex-direction: column;
  row-gap: 0.25rem;
+ align-items: center;
 }
 
 .calendar-event{
    max-width: 100%;
 }
+
 .pr-5{
     padding-right: 1rem !important;
+}
+.badge{
+    min-width:0.12rem !important;
+}
+
+@media (max-width: 576px) {
+    .badge{
+        
+        width: 10px !important;
+        height: 10px !important;
+        overflow: hidden !important;
+        color: transparent !important;
+
+    }
+    
 }

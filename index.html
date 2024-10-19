@@ -4,19 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link href="
+    https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/cerulean/bootstrap.min.css
+    " rel="stylesheet">
+
+    
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="./style.css" rel="stylesheet"/>
    </head>
 <body data-bs-theme="">
     
     <div class="container">
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-lg-9">
 
             
             <h3 id="year-display" class="py-2 pb-0"></h3>
-            <div class="py-5 pt-0 d-flex justify-content-between align-items-center"> 
+            <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
             <h1 id="month-display"></h1>
             <div class="d-flex flex-column">
                 <button class="btn" id="calendar-up">
@@ -28,7 +33,7 @@
                 </button>
             </div>
             </div>
-            <table class="table">
+            <table class="table" id="calendar-table">
                 <thead>
                   <tr>
                       <th class="text-danger">sun</th>
@@ -47,7 +52,7 @@
                 </tbody>
               </table>
               </div>
-              <div class="col-md-3 border border-top-0 border-end-0 border-bottom-0">
+              <div class="col-lg-3 border border-top-0 border-end-0 border-bottom-0">
                 <div class="mt-4">
                     <h4 id="selected-date" class="d-sm-none d-md-block"></h4>
                     <h6 class="text-secondary mt-5">events</h6>
@@ -55,7 +60,7 @@
                     <hr/>
                     <form class="form" id="event-form">
                         <div class="input-group">
-                            <input disabled id="event-name" type="text" class="form-control form-control-sm"/>
+                            <input disabled id="event-name" placeholder="enter the event name.." type="text" class="form-control form-control-sm"/>
                             <button id="add-event-btn" class="btn btn-primary btn-sm">add event</button>
                         </div>
                     </form>
@@ -128,6 +133,10 @@
           </form>
             
           </select>
+          
+          <label class="form-label mt-4">time</label>
+         <input class="form-control" type="time">
+
           <div class="d-flex flex-row-reverse w-full py-2 pb-1"><button class="btn btn-secondary" id="edit-btn"><i class="bi bi-pencil-square"></i> </button></div>
           <div id="note-display">
 
@@ -139,9 +148,6 @@
   <textarea id="note-text" class="form-control" style="height:500px;"></textarea>
        
           </div>
-          <label class="form-label mt-4">time</label>
-         <input class="form-control" type="time">
-
 
 
 
@@ -151,6 +157,7 @@
 <script>
     
 </script>
+<script src='https://cdn.jsdelivr.net/npm/touchsweep'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.3/marked.min.js" integrity="sha512-kZ9BCD8vqCw2vJ1XG3EVZN5M5aRNxxMK3+uYuZPWc+TtW2Z1zSgmFlTIVHYHaWH0bH2lp2dUlB/1+M1h+lvfeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js" integrity="sha512-+BMamP0e7wn39JGL8nKAZ3yAQT2dL5oaXWr4ZYlTGkKOaoXM/Yj7c4oy50Ngz5yoUutAG17flueD4F6QpTlPng==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script  src="main.js"></script>
