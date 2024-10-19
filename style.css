@@ -49,3 +49,15 @@
     }
     
 }
+
+
+#note-display img{
+    width: 100%;
+    height: auto;
+}
+
+#note-display pre::after{
+    content: 'run code';
+    padding: 0.5rem;
+    border:1px solid #ccc
+}

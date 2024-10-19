@@ -269,7 +269,7 @@ function openEvent(te){
     noteTextarea.value=te.note ||''
     colorInput.value=te.type
     noteDisplay.innerHTML=marked.parse(te.note)
-
+    hljs.highlightAll()
 
 
 }
@@ -281,11 +281,25 @@ noteTextarea.addEventListener("input",()=>{
     selectedEvent.note=noteTextarea.value
     localforage.setItem('events',events)
     noteDisplay.innerHTML=marked.parse(noteTextarea.value)
-    
+    hljs.highlightAll()
 
 })
 
 
+//solution was from stack overflow
+noteDisplay.addEventListener('keydown', function(e) {
+    if (e.key == 'Tab') {
+      e.preventDefault();
+      var start = this.selectionStart;
+      var end = this.selectionEnd;
+
+      this.value = this.value.substring(0, start) +
+        "\t" + this.value.substring(end);
+  
+      this.selectionStart =
+        this.selectionEnd = start + 1;
+    }
+  });
 
 let editBtn=document.querySelector('#edit-btn')
 editBtn.onclick=(e)=>{
@@ -297,8 +311,7 @@ editBtn.onclick=(e)=>{
 let fb=document.getElementById('calendar-table')
 let ts=new swipeDetector(fb)
 
-fb.addEventListener('swipeup',()=>{
-    console.log('swipe up')
+fb.addEventListener('swipeup',()=>{ 
     currentDate.setMonth(currentDate.getMonth()-1)
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 })
