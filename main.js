@@ -323,8 +323,8 @@ class swipeDetector{
         }, false)
         this.elem.addEventListener('touchend',this.end.bind(this))
         this.allowedTime=300
-        this.allowedDistX=150
-        this.allowedDistY=100
+        this.threshold=150
+        this.restraint=100
         
     }
 
@@ -340,24 +340,30 @@ class swipeDetector{
         this.endX=e.changedTouches[0].clientX
         this.endY=e.changedTouches[0].clientY
         this.endTime=Date.now()
+        this.deltaT=this.endTime-this.startTime
         this.deltaX=this.endX-this.startX
         this.deltaY=this.endY-this.startY
-        this.deltaT=this.endTime-this.startTime
+        
 
         
 
-        if(Math.abs(this.deltaX)>this.allowedDistX && Math.abs(this.deltaY)>this.allowedDistY && this.deltaT<=this.allowedTime){
-            if(this.deltaX>0){
-                this.elem.dispatchEvent(new CustomEvent('swipeleft'))
-    }else{
-        this.elem.dispatchEvent(new CustomEvent('swiperight'))
-    }
+        if( this.deltaT<=this.allowedTime){
+            if(Math.abs(this.deltaX)>=this.threshold && Math.abs(this.deltaY)<=this.restraint){ 
+                if(this.deltaX>0){
+                    this.elem.dispatchEvent(new CustomEvent('swipeleft'))
+                }else{
+                this.elem.dispatchEvent(new CustomEvent('swiperight'))
+                }
+            }else if(Math.abs(this.deltaY)>=this.threshold && Math.abs(this.deltaX)<=this.restraint){
+                if(this.deltaY>0){
+                    this.elem.dispatchEvent(new CustomEvent('swipeup'))
+                }else if(this.deltaY<0){
+                    this.elem.dispatchEvent(new CustomEvent('swipedown'))
+                }
+            }  
+            }
 
-    if(this.deltaY>0){
-        this.elem.dispatchEvent(new CustomEvent('swipeup'))
-    }else if(this.deltaY<0){
-        this.elem.dispatchEvent(new CustomEvent('swipedown'))
-    }
+  
         }
-    }}
+    }
 
