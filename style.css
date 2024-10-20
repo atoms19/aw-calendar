@@ -47,7 +47,13 @@
         color: transparent !important;
 
     }
-    
+}
+
+@media (min-width: 576px) {
+    .offcanvas.show{
+        resize: horizontal;
+        width:40vw;
+    }
 }
 
 

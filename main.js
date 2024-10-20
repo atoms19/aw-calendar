@@ -256,8 +256,16 @@ function updateEventList(){
 }
 
 
-
+let timeInp=document.querySelector('#time-input')
 let noteTextarea=document.querySelector('#note-text')
+
+
+timeInp.addEventListener('change',()=>{
+    if(selectedEvent){
+        selectedEvent.time=timeInp.value
+        localforage.setItem('events',events)
+    }
+})
 
 let selectedEvent;
 
@@ -269,6 +277,7 @@ function openEvent(te){
 
     noteTextarea.value=te.note ||''
     colorInput.value=te.type
+    timeInp.value=te.time ||''
     noteDisplay.innerHTML=marked.parse(te.note)
     renderMathInElement(noteDisplay)
     hljs.highlightAll()
@@ -306,8 +315,7 @@ noteTextarea.addEventListener('keydown', function(e) {
 
 let editBtn=document.querySelector('#edit-btn')
 editBtn.onclick=(e)=>{
-    e.preventDefault()
-    e.stopPropagation()
+  
     document.querySelector('#note-edit').classList.toggle('d-none')
 }
 
