@@ -182,7 +182,7 @@ eventForm.addEventListener('submit',(e)=>{
             name:eventName.value,
             type:'primary',
             isTask:false,
-            subtasts:[],
+            subtasks:[],
             notes:''
 
     })
@@ -278,9 +278,10 @@ function openEvent(te){
     noteTextarea.value=te.note ||''
     colorInput.value=te.type
     timeInp.value=te.time ||''
-    noteDisplay.innerHTML=marked.parse(te.note)
+    noteDisplay.innerHTML=marked.parse(te.note||'')
     renderMathInElement(noteDisplay)
     hljs.highlightAll()
+  updateTaskList()
 
 
 }
@@ -331,6 +332,66 @@ fb.addEventListener('swipedown',()=>{
     currentDate.setMonth(currentDate.getMonth()+1)
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 })
+
+
+let taskBtn=document.querySelector("#task-btn")
+let taskInp=document.querySelector("#task-input")
+
+
+
+let taskAddBtn=document.querySelector("#task-add")
+
+
+taskAddBtn.onclick=()=>{
+    if(taskInp.children[0].value.trim()=='') return
+    selectedEvent.isTask=true
+    selectedEvent.subtasks.push({
+        name:taskInp.children[0].value,
+    done:false})
+    localforage.setItem('events',events)
+    updateTaskList()
+    
+}
+taskBtn.onclick=()=>{
+    taskInp.classList.toggle('d-none')
+    
+}
+
+
+
+
+function updateTaskList(){
+    function deleteTask(i){
+        selectedEvent.subtasks.splice(i,1)
+        localforage.setItem('events',events)
+        updateTaskList()
+    }
+    let tasklist=document.querySelector('#task-list')
+    tasklist.innerHTML=''
+    selectedEvent.subtasks.forEach((t,i)=>{
+        let component=`<div class="d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5">
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" ${t.done && 'checked'} id="flexCheckDefault">
+  <label class="form-check-label" for="flexCheckDefault">
+    ${t.name}
+  </label>
+</div>
+<button class="btn btn-close btn-sm" onclick="deleteTask(${i})"></button>
+</div>`
+        tasklist.innerHTML+=component
+
+        
+    })
+if(selectedEvent.subtasks.length==0){
+    document.querySelector('#task-heading').classList.add('d-none')
+
+}else{
+    document.querySelector('#task-heading').classList.remove('d-none')
+}
+
+
+
+}
 
 }
 
