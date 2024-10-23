@@ -1,401 +1,13 @@
-async function  main(params) {
+ import {input,label,$el,effect,state,tr,td,div,span,li,button,i} from 'https://esm.sh/dominity@latest'
 
 
 
-let calendarBody=document.querySelector("#calendar-body")
-let yearDisplay=document.querySelector("#year-display")
-let monthDisplay=document.querySelector("#month-display")
-let upBtn=document.querySelector("#calendar-up")
-let downBtn=document.querySelector("#calendar-down")
+let calendarBody=$el("#calendar-body")
+let yearDisplay=$el("#year-display")
+let monthDisplay=$el("#month-display")
 
 
 let today=new Date()
-
-
-
-
-
-let events=await localforage.getItem('events') || [{
-    date:'16-10-2024',
-    name:'project',
-    type:'warning',
-    isTask:false,
-    subtasts:[],
-    notes:'',
-    time:''
-    
-},{
-    date:'16-10-2024',
-    name:'submission ',
-    type:'primary',
-    isTask:false,
-    subtasts:[]
-    ,notes:'',
-    time:''
-
-},]
-console.log(events)
-
-let selected=0
-
-function loadCurrentMonth(year,month){
-    calendarBody.innerHTML=''
-    let nextmonth=new Date(year,month+1,1);
-    nextmonth.setDate(nextmonth.getDate()-1)
-    let lastday=nextmonth.getDate()
-    
-let currentDay=0
-    if(today.getFullYear()==year && today.getMonth()==month){
-         currentDay=today.getDate()
-    }
-    
-   
-
-    let m=new Date(year,month,1)
-    monthDisplay.innerHTML=m.toLocaleString('default',{month:'long'})
-    yearDisplay.innerHTML=m.getFullYear()
-    let startat=m.getDay()
-
-    let previousMonth=new Date(year,month,1)
-    previousMonth.setDate(m.getDate()-1)
-    let lastdayOfPreviousMonth=previousMonth.getDate()
-
-    let realNextMonth=new Date(year,month+1,1)
-    let firstDayOfNextMonth=realNextMonth.getDate()
-    var selected=0
-
-    for(let i=0;i<35;i++){
-        if((i)%7==0 || i==0){
-            currWeekContainer=document.createElement('tr')
-            calendarBody.appendChild(currWeekContainer)
-        }
-      
-        let elem=document.createElement('td')
-        let elem1=document.createElement('div')
-        elem1.classList.add('date')
-        elem.appendChild(elem1)
-        if(i>=startat && i<lastday+startat){
-            let thisDate=new Date(year,month,1)
-            thisDate.setDate(i-startat+1)
-            
-            elem.addEventListener('click',()=>selectDate(thisDate,elem))
-
-            elem1.innerHTML=i-startat+1
-            events.forEach(event=>{
-                    let [day,month,year]=event.date.split('-')
-                    let sampleDate=new Date(year,month-1,day)
-
-                    if(thisDate.getDate()==sampleDate.getDate() && thisDate.getMonth()==sampleDate.getMonth() && thisDate.getFullYear()==sampleDate.getFullYear()){
-                        let badge=document.createElement('span')
-                        badge.classList.add('badge','text-bg-'+event.type)
-                        badge.innerHTML=event.name
-                        elem1.appendChild(badge)
-                    }
-                
-            })
-            
-            
-            
-            if(i-startat+1==currentDay){
-                elem.classList.add('border','border-primary','bg-primary','text-white')
-            }
-        }else if(i<startat){
-            elem1.innerHTML=lastdayOfPreviousMonth-(startat-(i+1))
-            elem1.classList.add('text-body-secondary')
-
-        }else if(i>=lastday){
-            elem1.innerHTML=firstDayOfNextMonth
-            firstDayOfNextMonth+=1
-            elem1.classList.add('text-body-secondary')
-        }
-        
-
-      
-        
-        
-        currWeekContainer.appendChild(elem)
-    }
-}
-
-
-
-
-let currentDate=new Date()
-loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-
-
-
-upBtn.addEventListener("click",()=>{
-    currentDate.setMonth(currentDate.getMonth()-1)
-loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-
-})
-
-downBtn.addEventListener("click",()=>{
-    currentDate.setMonth(currentDate.getMonth()+1)
-loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-
-})
-
-let selectedDateDisplay=document.querySelector("#selected-date")
-let eventDisplay=document.querySelector('#event-display')
-let eventName=document.querySelector('#event-name')
-let eventForm=document.querySelector('#event-form')
-
-
-let eventConfigForm=document.querySelector("#event-config-form")
-let eventConfigClose=document.querySelector("#close-event")
-let offCanvasEvent=document.querySelector('#offcanvas-event-config')
-
-
-let colorInput=document.querySelector('#color-input')
-
-colorInput.addEventListener('change',()=>{
-    if(selectedEvent){
-        events.forEach(e=>{
-            if(e==selectedEvent){
-                e.type=colorInput.value
-            }
-        })
-        colorInput.classList.remove('bg-'+colorInput.value)
-        localforage.setItem('events',events)
-        
-        updateEventList()
-        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-        
-    }
-})
-
-eventConfigClose.addEventListener("click",()=>{
-    offCanvasEvent.classList.remove('show')
-
-})
-
-let addEventBtn=document.querySelector('#add-event-btn')
-
-
-eventForm.addEventListener('submit',(e)=>{
-    e.preventDefault()
-    if(eventName.value.trim()=='') return
-    events.push({
-            date:`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,
-            name:eventName.value,
-            type:'primary',
-            isTask:false,
-            subtasks:[],
-            notes:''
-
-    })
-    localforage.setItem('events',events)
-    updateEventList()
-    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-    eventName.value=''
-})
-
-let d;
-function selectDate(date,elem){
-    if(eventName.hasAttribute('disabled')){
-        eventName.removeAttribute('disabled')
-    }
- d=date
-    selectedDateDisplay.innerHTML=d.toLocaleString("default",{day:'numeric',month:'long',year:'numeric'})
-    if(!selected){
-        selected=elem
-        selected.classList.add('selected')
-    }else{
-        selected.classList.remove('selected')
-        selected=elem
-        selected.classList.add('selected')
-    }
-
-    updateEventList()
-}
-
-
-function updateEventList(){
-
-    let targetEvents=events.filter(e=>e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
-    eventDisplay.innerHTML=''
-    if(typeof targetEvents ==typeof []){
-        targetEvents.forEach((te)=>{
-            let litem=document.createElement('li')
-            litem.classList.add('list-group-item','list-group-item-'+te.type,'d-flex','justify-content-between')
-
-            let btnContainer=document.createElement('div')
-            btnContainer.classList.add('d-flex','gap-3')
-
-
-
-            let deleteBtn=document.createElement('button')
-            deleteBtn.classList.add('btn','btn-'+te.type)
-            deleteBtn.innerHTML='<i class="bi bi-trash"></i>'
-            deleteBtn.onclick=(e)=>{
-                e.stopPropagation()
-                events=events.filter((e)=>e.name!=te.name)
-                localforage.setItem('events',events)
-                updateEventList()
-                loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-                
-            }
-
-            litem.onclick=()=>{
-                openEvent(te)
-            }
-           
-            litem.innerHTML=te.name
-
-        
-            btnContainer.appendChild(deleteBtn)
-            litem.appendChild(btnContainer)
-            eventDisplay.appendChild(litem)
-        })
-    }
-
-
-
-}
-
-
-let timeInp=document.querySelector('#time-input')
-let noteTextarea=document.querySelector('#note-text')
-
-
-timeInp.addEventListener('change',()=>{
-    if(selectedEvent){
-        selectedEvent.time=timeInp.value
-        localforage.setItem('events',events)
-    }
-})
-
-let selectedEvent;
-
-function openEvent(te){
-    offCanvasEvent.classList.add('show')
-    console.log('event has been opened ')
-    selectedEvent=te
-    noteDisplay.innerHTML=''
-
-    noteTextarea.value=te.note ||''
-    colorInput.value=te.type
-    timeInp.value=te.time ||''
-    noteDisplay.innerHTML=marked.parse(te.note||'')
-    renderMathInElement(noteDisplay)
-    hljs.highlightAll()
-  updateTaskList()
-
-
-}
-
-
-let noteDisplay=document.querySelector("#note-display")
-noteTextarea.addEventListener("input",()=>{
-    console.log(selectedEvent)
-    selectedEvent.note=noteTextarea.value
-    localforage.setItem('events',events)
-    noteDisplay.innerHTML=marked.parse(noteTextarea.value)
-    renderMathInElement(noteDisplay)
-    hljs.highlightAll()
-
-})
-
-
-//solution was from stack overflow
-noteTextarea.addEventListener('keydown', function(e) {
-    if (e.key == 'Tab') {
-      e.preventDefault();
-      var start = this.selectionStart;
-      var end = this.selectionEnd;
-
-      this.value = this.value.substring(0, start) +
-        "\t" + this.value.substring(end);
-  
-      this.selectionStart =
-        this.selectionEnd = start + 1;
-    }
-  });
-
-let editBtn=document.querySelector('#edit-btn')
-editBtn.onclick=(e)=>{
-  
-    document.querySelector('#note-edit').classList.toggle('d-none')
-}
-
-let fb=document.getElementById('calendar-table')
-let ts=new swipeDetector(fb)
-
-fb.addEventListener('swipeup',()=>{ 
-    currentDate.setMonth(currentDate.getMonth()-1)
-    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-})
-
-fb.addEventListener('swipedown',()=>{
-    currentDate.setMonth(currentDate.getMonth()+1)
-    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-})
-
-
-let taskBtn=document.querySelector("#task-btn")
-let taskInp=document.querySelector("#task-input")
-
-
-
-let taskAddBtn=document.querySelector("#task-add")
-
-
-taskAddBtn.onclick=()=>{
-    if(taskInp.children[0].value.trim()=='') return
-    selectedEvent.isTask=true
-    selectedEvent.subtasks.push({
-        name:taskInp.children[0].value,
-    done:false})
-    localforage.setItem('events',events)
-    updateTaskList()
-    
-}
-taskBtn.onclick=()=>{
-    taskInp.classList.toggle('d-none')
-    
-}
-
-
-
-
-function updateTaskList(){
-    function deleteTask(i){
-        selectedEvent.subtasks.splice(i,1)
-        localforage.setItem('events',events)
-        updateTaskList()
-    }
-    let tasklist=document.querySelector('#task-list')
-    tasklist.innerHTML=''
-    selectedEvent.subtasks.forEach((t,i)=>{
-        let component=`<div class="d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5">
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" ${t.done && 'checked'} id="flexCheckDefault">
-  <label class="form-check-label" for="flexCheckDefault">
-    ${t.name}
-  </label>
-</div>
-<button class="btn btn-close btn-sm" onclick="deleteTask(${i})"></button>
-</div>`
-        tasklist.innerHTML+=component
-
-        
-    })
-if(selectedEvent.subtasks.length==0){
-    document.querySelector('#task-heading').classList.add('d-none')
-
-}else{
-    document.querySelector('#task-heading').classList.remove('d-none')
-}
-
-
-
-}
-
-}
-
-main()
 
 
 
@@ -409,7 +21,7 @@ class swipeDetector{
         this.elem.addEventListener('touchend',this.end.bind(this))
         this.allowedTime=300
         this.threshold=150
-        this.restraint=100
+        this.restraint=125
         
     }
 
@@ -451,4 +63,401 @@ class swipeDetector{
   
         }
     }
+
+let events=state(await localforage.getItem('events') || [{
+    date:'16-10-2024',
+    name:'project',
+    type:'warning',
+    isTask:false,
+    subtasts:[],
+    notes:'',
+    time:''
+    
+},{
+    date:'16-10-2024',
+    name:'submission ',
+    type:'primary',
+    isTask:false,
+    subtasts:[]
+    ,notes:'',
+    time:''
+
+},])
+
+
+
+let selected=0
+
+function loadCurrentMonth(year,month){
+    calendarBody.html('')
+    let nextmonth=new Date(year,month+1,1);
+    nextmonth.setDate(nextmonth.getDate()-1)
+    let lastday=nextmonth.getDate()
+    
+let currentDay=0
+    if(today.getFullYear()==year && today.getMonth()==month){
+         currentDay=today.getDate()
+    }
+    
+   
+
+    let m=new Date(year,month,1)
+    monthDisplay.html(m.toLocaleString('default',{month:'long'}))
+    yearDisplay.html(m.getFullYear())
+    let startat=m.getDay()
+
+    let previousMonth=new Date(year,month,1)
+    previousMonth.setDate(m.getDate()-1)
+    let lastdayOfPreviousMonth=previousMonth.getDate()
+
+    let realNextMonth=new Date(year,month+1,1)
+    let firstDayOfNextMonth=realNextMonth.getDate()
+    var selected=0
+    let currWeekContainer
+    for(let i=0;i<35;i++){
+        
+        if((i)%7==0 || i==0){
+            currWeekContainer=tr()
+            currWeekContainer.addTo(calendarBody)
+        }
+        let dateElem=td(
+            div(
+                {class:'date'},
+
+            )
+        )
+        if(i>=startat && i<lastday+startat){
+            let thisDate=new Date(year,month,1)
+            thisDate.setDate(i-startat+1)
+            
+            dateElem.on('click',()=>selectDate(thisDate,dateElem))
+
+            dateElem.child(0).html(i-startat+1)
+
+            events.value.forEach(event=>{
+                    let [day,month,year]=event.date.split('-')
+                    let sampleDate=new Date(year,month-1,day)
+
+                    if(thisDate.getDate()==sampleDate.getDate() && thisDate.getMonth()==sampleDate.getMonth() && thisDate.getFullYear()==sampleDate.getFullYear()){
+                        dateElem.child(0)
+
+                        span(
+                            {class:'badge text-bg-'+event.type},
+                            event.name
+                        ).addTo(dateElem.child(0))
+                        
+                    }
+                
+            })
+            
+            
+            
+            if(i-startat+1==currentDay){
+                dateElem.elem.classList.add('border','border-primary','bg-primary','text-white')
+            }
+        }else if(i<startat){
+            dateElem.child(0).html(lastdayOfPreviousMonth-(startat-(i+1)))
+            dateElem.child(0).elem.classList.add('text-body-secondary')
+
+        }else if(i>=lastday){
+            dateElem.child(0).html(firstDayOfNextMonth)
+            firstDayOfNextMonth+=1
+            dateElem.child(0).elem.classList.add('text-body-secondary')
+        }
+        
+        dateElem.addTo(currWeekContainer)
+    }
+}
+
+
+
+
+let currentDate=new Date()
+loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+
+
+let monthUp=()=>{
+    currentDate.setMonth(currentDate.getMonth()-1)
+loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+}
+
+let monthDown=()=>{
+    currentDate.setMonth(currentDate.getMonth()+1)
+loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+}
+
+
+let upBtn=$el("#calendar-up").on('click',monthUp)
+let downBtn=$el("#calendar-down").on('click',monthDown)
+
+let selectedDateDisplay=$el("#selected-date")
+let eventDisplay=$el('#event-display')
+let eventForm=$el('#event-form')
+
+
+let eventConfigForm=$el("#event-config-form")
+let eventConfigClose=$el("#close-event")
+let offCanvasEvent=$el('#offcanvas-event-config')
+
+
+let colorInput=$el('#color-input')
+
+colorInput.on('change',()=>{
+    if(selectedEvent){
+        events.value.forEach(e=>{
+            if(e==selectedEvent){
+                e.type=colorInput.elem.value
+            } 
+        })
+        colorInput.elem.classList.remove('bg-'+colorInput.elem.value)
+        localforage.setItem('events',events.value)
+        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+    updateEventList()
+    }
+})
+
+
+
+eventConfigClose.on("click",()=>{
+    offCanvasEvent.elem.classList.remove('show')
+
+})
+
+let addEventBtn=$el('#add-event-btn')
+let eventName=state('')
+
+$el('#event-name').model(eventName)
+
+eventForm.on('submit',(e)=>{
+    e.preventDefault()
+    if(eventName.value.trim()=='') return
+    events.value=[...events.value,{
+            date:`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,
+            name:eventName.value,
+            type:'primary',
+            isTask:false,
+            subtasks:[],
+            notes:''
+
+    }]
+    eventName.value=''
+    localforage.setItem('events',events.value)
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+    updateEventList()
+
+})
+
+let d;
+function selectDate(date,elem){
+    if($el('#event-name').elem.hasAttribute('disabled')){
+        $el('#event-name').elem.removeAttribute('disabled')
+    }
+ d=date
+    selectedDateDisplay.html(d.toLocaleString("default",{day:'numeric',month:'long',year:'numeric'}))
+    if(!selected){
+        selected=elem
+        selected.elem.classList.add('selected')
+    }else{
+        selected.elem.classList.remove('selected')
+        selected=elem
+        selected.elem.classList.add('selected')
+    }
+
+    updateEventList()
+}
+
+
+function updateEventList(){
+
+    let targetEvents=events.value.filter(e=>e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
+    eventDisplay.html('')
+
+    if(typeof targetEvents ==typeof []){
+        targetEvents.forEach((te)=>{
+
+        
+            li({class:'list-group-item list-group-item-'+te.type+' d-flex justify-content-between'},te.name,
+                div({class:'d-flex gap-3'},
+                    button({class:'btn btn-'+te.type},
+                        i({class:'bi bi-trash'})
+                    ).on('click',(e)=>{
+                        e.stopPropagation()
+                        events=events.filter((e)=>e.name!=te.name)
+                        localforage.setItem('events',events)
+                        updateEventList()
+                        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+                        
+                    })
+                )
+            
+            ).on('click',()=>{
+                openEvent(te)
+            }).addTo(eventDisplay)
+            
+        })
+    }
+
+
+
+}
+
+
+let timeInp=$el('#time-input')
+let noteTextarea=$el('#note-text')
+
+
+timeInp.on('change',()=>{
+    if(selectedEvent){
+        selectedEvent.time=timeInp.value
+        localforage.setItem('events',events.value)
+        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+    }
+})
+
+let selectedEvent;
+
+function openEvent(te){
+    offCanvasEvent.elem.classList.add('show')
+    console.log('event has been opened ')
+    selectedEvent=te
+    noteDisplay.html('')
+
+    noteTextarea.elem.value=te.note ||''
+    colorInput.elem.value=te.type
+    timeInp.elem.value=te.time ||''
+    noteDisplay.html(marked.parse(te.note||''))
+    renderMathInElement(noteDisplay.elem)
+    hljs.highlightAll()
+  updateTaskList()
+
+
+}
+
+
+let noteDisplay=$el("#note-display")
+noteTextarea.on("input",()=>{
+    console.log(selectedEvent)
+    selectedEvent.note=noteTextarea.value
+    localforage.setItem('events',events)
+    noteDisplay.html(marked.parse(noteTextarea.value))
+    renderMathInElement(noteDisplay.elem)
+    hljs.highlightAll()
+
+})
+
+
+//solution was from stack overflow
+noteTextarea.on('keydown', function(e) {
+    if (e.key == 'Tab') {
+      e.preventDefault();
+      var start = this.selectionStart;
+      var end = this.selectionEnd;
+
+      this.value = this.value.substring(0, start) +
+        "\t" + this.value.substring(end);
+  
+      this.selectionStart =
+        this.selectionEnd = start + 1;
+    }
+  });
+
+let editBtn=$el('#edit-btn')
+editBtn.on("click",(e)=>{
+    $el('#note-edit').elem.classList.toggle('d-none')
+})
+
+let fb=$el('#calendar-table')
+let ts=new swipeDetector(fb.elem)
+
+fb.on('swipeup',monthUp)
+
+fb.on('swipedown',monthDown)
+
+
+let taskBtn=$el("#task-btn")
+let taskInp=$el("#task-input")
+
+
+
+let taskAddBtn=$el("#task-add")
+
+
+let taskname=state('')
+$el('#taskinp').model(taskname)
+
+$el("#taskform").on("submit",(e)=>{
+e.preventDefault()
+    if(taskname.value.trim()=='') return
+    selectedEvent.isTask=true
+    selectedEvent.subtasks.push({
+        name:taskname.value,
+    done:false})
+    localforage.setItem('events',events.value)
+    taskname.value=''
+        
+    updateTaskList()
+    
+})
+
+taskBtn.on("click",()=>{
+    taskInp.elem.classList.toggle('d-none')
+    
+})
+
+
+
+
+function updateTaskList(){
+   
+    let tasklist=$el('#task-list')
+    tasklist.html('')
+  
+
+   selectedEvent.subtasks.forEach((t,i)=>{
+     
+    let done=state(t.done)
+ div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5'},
+    div({class:'form-check'},
+        input({class:'form-check-input',type:'checkbox'}).model(done),
+        label({class:'form-check-label', for:'flexCheckDefault'},t.name)
+    ),
+    button({class:'btn btn-close btn-sm'}).on("click",()=>{
+        selectedEvent.subtasks.splice(i,1)
+        localforage.setItem('events',events.value)
+        updateTaskList()
+    })
+).addTo(tasklist)
+
+effect(()=>{
+  console.log(done.value)
+  t.done=done.value
+  localforage.setItem('events',events.value)
+
+})
+    })
+
+if(selectedEvent.subtasks.length==0){
+    $el('#task-heading').elem.classList.add('d-none')
+
+}else{
+    $el('#task-heading').elem.classList.remove('d-none')
+}
+
+
+
+}
+
+
+$el("#task-heading").on("click",()=>{
+    $el("#task-heading").parent.classList.dnon
+})
+
+
+
+
+
+
 
