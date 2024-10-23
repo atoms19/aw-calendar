@@ -65,6 +65,7 @@ class swipeDetector{
     }
 
 let events=state(await localforage.getItem('events') || [{
+    id:'1',
     date:'16-10-2024',
     name:'project',
     type:'warning',
@@ -74,6 +75,7 @@ let events=state(await localforage.getItem('events') || [{
     time:''
     
 },{
+    id:'2',
     date:'16-10-2024',
     name:'submission ',
     type:'primary',
@@ -126,6 +128,26 @@ let currentDay=0
 
             )
         )
+
+        dateElem.on("dragover",(e)=>{
+            e.preventDefault()
+            dateElem.elem.classList.add('bg-secondary')
+        })
+        dateElem.on('dragleave',()=>{  
+            dateElem.elem.classList.remove('bg-secondary')
+         })
+        dateElem.on('drop',(e)=>{
+         console.log('dropped ')
+         let id=e.dataTransfer.getData('text/plain')
+         events.value.filter((e)=>e.id==id)[0].date=`${i-startat+1}-${month+1}-${year}`
+         localforage.setItem('events',events.value)
+         loadCurrentMonth(year,month)
+         updateEventList()
+        })
+
+
+
+
         if(i>=startat && i<lastday+startat){
             let thisDate=new Date(year,month,1)
             thisDate.setDate(i-startat+1)
@@ -235,6 +257,7 @@ eventForm.on('submit',(e)=>{
     e.preventDefault()
     if(eventName.value.trim()=='') return
     events.value=[...events.value,{
+            id:'e'+Date.now(),
             date:`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,
             name:eventName.value,
             type:'primary',
@@ -279,14 +302,14 @@ function updateEventList(){
         targetEvents.forEach((te)=>{
 
         
-            li({class:'list-group-item list-group-item-'+te.type+' d-flex justify-content-between'},te.name,
+            li({draggable:'true',class:'list-group-item list-group-item-'+te.type+' d-flex justify-content-between'},te.name,
                 div({class:'d-flex gap-3'},
                     button({class:'btn btn-'+te.type},
                         i({class:'bi bi-trash'})
                     ).on('click',(e)=>{
                         e.stopPropagation()
-                        events=events.filter((e)=>e.name!=te.name)
-                        localforage.setItem('events',events)
+                        events.value=events.value.filter((e)=>e.id!=te.id)
+                        localforage.setItem('events',events.value)
                         updateEventList()
                         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
                         
@@ -295,6 +318,9 @@ function updateEventList(){
             
             ).on('click',()=>{
                 openEvent(te)
+            }).on('dragstart',(e)=>{
+                e.dataTransfer.allowedEffect='all'
+                e.dataTransfer.setData('text/plain',te.id)
             }).addTo(eventDisplay)
             
         })
@@ -454,7 +480,6 @@ if(selectedEvent.subtasks.length==0){
 $el("#task-heading").on("click",()=>{
     $el("#task-heading").parent.classList.dnon
 })
-
 
 
 
