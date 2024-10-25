@@ -1,6 +1,13 @@
  import {input,label,$el,effect,state,tr,td,div,span,li,button,i} from 'https://esm.sh/dominity@latest'
 
 
+localforage.config({
+    name: 'calendar',
+    version:2.0,
+
+    
+})
+
 
 let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
@@ -70,7 +77,7 @@ let events=state(await localforage.getItem('events') || [{
     name:'project',
     type:'warning',
     isTask:false,
-    subtasts:[],
+    subtasks:[],
     notes:'',
     time:''
     
@@ -80,7 +87,7 @@ let events=state(await localforage.getItem('events') || [{
     name:'submission ',
     type:'primary',
     isTask:false,
-    subtasts:[]
+    subtasks:[]
     ,notes:'',
     time:''
 
@@ -364,11 +371,12 @@ function openEvent(te){
 
 
 let noteDisplay=$el("#note-display")
+let note =state('')
+noteTextarea.model(note)
 noteTextarea.on("input",()=>{
-    console.log(selectedEvent)
-    selectedEvent.note=noteTextarea.value
-    localforage.setItem('events',events)
-    noteDisplay.html(marked.parse(noteTextarea.value))
+    selectedEvent.note=note.value
+    localforage.setItem('events',events.value)
+    noteDisplay.html(marked.parse(note.value))
     renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
 
