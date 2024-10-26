@@ -70,7 +70,7 @@ class swipeDetector{
   
         }
     }
-alert(await localforage.getItem('events'))
+alert(JSON.stringify(await localforage.getItem('events')))
 let events=state(await localforage.getItem('events') || [{
     id:'1',
     date:'16-10-2024',
