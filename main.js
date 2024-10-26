@@ -3,7 +3,7 @@
 
 localforage.config({
     name: 'calendar',
-    version:2.0,
+    version:1.0,
 
     
 })
@@ -70,7 +70,7 @@ class swipeDetector{
   
         }
     }
-
+alert(await localforage.getItem('events'))
 let events=state(await localforage.getItem('events') || [{
     id:'1',
     date:'16-10-2024',
