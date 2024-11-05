@@ -70,7 +70,7 @@
                     </form>
                       
                   
-                    <ul class="list-group mt-3" id="event-display">
+                    <ul class="list-group mt-3 mb-4" id="event-display">
                         <!-- <li class="list-group-item">stupid event</li>
                       
                         <li class="list-group-item list-group-item-primary ">
@@ -139,12 +139,19 @@
           </select>
         </form>
           
-          <label class="form-label mt-4">time</label>
-         <input class="form-control" id="time-input" type="time">
+          <label class="form-label d-none mt-4">time</label>
+         <input class="form-control d-none" id="time-input" type="time"> 
 
           <div class="d-flex flex-row-reverse w-full py-2 pb-1">
            
            <div class="btn-group"> 
+
+<input type="checkbox" class="btn-check" id="taginpcheck" autocomplete="off">
+<label for="taginpcheck" id="tag-btn" class="btn btn-secondary"><i class="bi bi-tags-fill"></i></label>    
+
+ <input type="checkbox" class="btn-check" id="locinpcheck" autocomplete="off">
+<label for="locinpcheck" id="loc-btn" class="btn btn-secondary"><i class="bi bi-geo-alt-fill"></i></label>  
+
 <input type="checkbox" class="btn-check" id="taskinpcheck" autocomplete="off">
 <label for="taskinpcheck" id="task-btn" class="btn btn-secondary"><i class="bi bi-ui-checks"></i></label>
 

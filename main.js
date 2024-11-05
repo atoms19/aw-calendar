@@ -1,4 +1,4 @@
- import {input,label,$el,effect,state,tr,td,div,span,li,button,i} from 'https://esm.sh/dominity@latest'
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,li,button,i} from 'https://esm.sh/dominity@latest'
 
 
 localforage.config({
@@ -9,12 +9,15 @@ localforage.config({
 })
 
 
+
+
 let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
 
 let today=new Date()
+
 
 
 
@@ -78,6 +81,7 @@ let events=state(await localforage.getItem('events') || [])
 let selected=0
 
 function loadCurrentMonth(year,month){
+
     calendarBody.html('')
     let nextmonth=new Date(year,month+1,1);
     nextmonth.setDate(nextmonth.getDate()-1)
@@ -407,6 +411,7 @@ e.preventDefault()
     if(taskname.value.trim()=='') return
     selectedEvent.isTask=true
     selectedEvent.subtasks.push({
+        id:Math.random()*100+Date.now(),
         name:taskname.value,
     done:false})
     localforage.setItem('events',events.value)
@@ -430,20 +435,77 @@ function updateTaskList(){
     tasklist.html('')
   
 
+    /*
+    
+    
+    */
    selectedEvent.subtasks.forEach((t,i)=>{
      
     let done=state(t.done)
- div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5'},
+let d=div({class:'drop-zone'}).css({
+    transition:'height 0.15s ease-in'
+}).on('dragover',(e)=>{
+    e.preventDefault()
+ d.css({
+    height:'3rem',
+ })
+}).on('dragleave',()=>{
+    d.css({
+       height:'1rem',
+    })
+}).on('drop',(e)=>{
+
+    let data=e.dataTransfer.getData('text/plain')
+    let index=parseInt(data)
+
+    let movingTask=selectedEvent.subtasks.splice(index,1)[0]
+    selectedEvent.subtasks.splice(i,0,movingTask)
+
+    localforage.setItem('events',events.value)
+    updateTaskList()
+
+
+
+})
+
+if(i!=selectedEvent.subtasks.length-1){
+    d.addTo(tasklist)
+}
+
+ let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5','draggable':'true'},
     div({class:'form-check'},
         input({class:'form-check-input',type:'checkbox'}).model(done),
-        label({class:'form-check-label', for:'flexCheckDefault'},t.name)
+        label({class:'form-check-label px-2', for:'flexCheckDefault'},t.name)
     ),
     button({class:'btn btn-close btn-sm'}).on("click",()=>{
         selectedEvent.subtasks.splice(i,1)
         localforage.setItem('events',events.value)
         updateTaskList()
     })
-).addTo(tasklist)
+).addTo(tasklist).on("dragstart",(e)=>{
+    tas.elem.classList.add('dragging')
+    e.dataTransfer.setData('text/plain',i)
+    $$el('.drop-zone').forEach(d=>{
+      
+        d.css({
+            display:'block',
+            height:'1rem',
+            width:'100%',
+            background:'var(--bs-primary-bg-subtle)',
+        })
+    })
+}).on("dragend",(e)=>{
+    tas.elem.classList.remove('dragging')
+    $$el('.drop-zone').forEach(d=>{
+        d.css({
+            height:'0rem'
+        })
+    })
+})
+
+if(i==selectedEvent.subtasks.length-1){
+    d.addTo(tasklist)
+}
 
 effect(()=>{
   console.log(done.value)
@@ -463,11 +525,6 @@ if(selectedEvent.subtasks.length==0){
 
 
 }
-
-
-$el("#task-heading").on("click",()=>{
-    $el("#task-heading").parent.classList.dnon
-})
 
 
 
