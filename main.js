@@ -427,7 +427,37 @@ taskBtn.on("click",()=>{
 })
 
 
+function dropZone(i){
+    let d= div({class:'drop-zone'}).css({
+        transition:'height 0.15s ease-in'
+    }).on('dragover',(e)=>{
+        e.preventDefault()
+     d.css({
+        height:'3rem',
+        background:'var(--bs-success-bg-subtle)'
+     })
+    }).on('dragleave',()=>{
+        d.css({
+           height:'1rem',
+            background:'var(--bs-primary-bg-subtle)'
+        })
+    }).on('drop',(e)=>{
+    
+        let data=e.dataTransfer.getData('text/plain')
+        let index=parseInt(data)
+    
+        let movingTask=selectedEvent.subtasks.splice(index,1)[0]
+        selectedEvent.subtasks.splice(i,0,movingTask)
+    
+        localforage.setItem('events',events.value)
+        updateTaskList()
+    
+    
+    
+    })
 
+    return d
+}
 
 function updateTaskList(){
    
@@ -442,36 +472,10 @@ function updateTaskList(){
    selectedEvent.subtasks.forEach((t,i)=>{
      
     let done=state(t.done)
-let d=div({class:'drop-zone'}).css({
-    transition:'height 0.15s ease-in'
-}).on('dragover',(e)=>{
-    e.preventDefault()
- d.css({
-    height:'3rem',
-    background:'var(--bs-success-bg-subtle)'
- })
-}).on('dragleave',()=>{
-    d.css({
-       height:'1rem',
-        background:'var(--bs-primary-bg-subtle)'
-    })
-}).on('drop',(e)=>{
-
-    let data=e.dataTransfer.getData('text/plain')
-    let index=parseInt(data)
-
-    let movingTask=selectedEvent.subtasks.splice(index,1)[0]
-    selectedEvent.subtasks.splice(i,0,movingTask)
-
-    localforage.setItem('events',events.value)
-    updateTaskList()
+let d=dropZone(i)
 
 
-
-})
-
-
-    d.addTo(tasklist)
+d.addTo(tasklist)
 
 
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5','draggable':'true'},
@@ -506,7 +510,7 @@ let d=div({class:'drop-zone'}).css({
 })
 
 if(i==selectedEvent.subtasks.length-1){
-    d.addTo(tasklist)
+    dropZone(i+1).addTo(tasklist)
 }
 
 effect(()=>{
