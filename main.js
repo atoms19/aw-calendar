@@ -448,10 +448,12 @@ let d=div({class:'drop-zone'}).css({
     e.preventDefault()
  d.css({
     height:'3rem',
+    background:'var(--bs-success-bg-subtle)'
  })
 }).on('dragleave',()=>{
     d.css({
        height:'1rem',
+        background:'var(--bs-primary-bg-subtle)'
     })
 }).on('drop',(e)=>{
 
@@ -468,9 +470,9 @@ let d=div({class:'drop-zone'}).css({
 
 })
 
-if(i!=selectedEvent.subtasks.length-1){
+
     d.addTo(tasklist)
-}
+
 
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5','draggable':'true'},
     div({class:'form-check'},
