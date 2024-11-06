@@ -158,7 +158,7 @@ let currentDay=0
                             {class:'badge text-bg-'+event.type},
                             event.name
                         ).addTo(dateElem.child(0))
-                        
+                            
                     }
                 
             })
@@ -168,7 +168,7 @@ let currentDay=0
             if(i-startat+1==currentDay){
                // dateElem.elem.classList.add('border','border-primary','bg-primary','text-white')
                dateElem.css({
-                background:'var(--bs-primary-bg-subtle'
+                background:'var(--bs-primary-bg-subtle)'
                })
             }
         }else if(i<startat){
