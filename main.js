@@ -166,7 +166,10 @@ let currentDay=0
             
             
             if(i-startat+1==currentDay){
-                dateElem.elem.classList.add('border','border-primary','bg-primary','text-white')
+               // dateElem.elem.classList.add('border','border-primary','bg-primary','text-white')
+               dateElem.css({
+                background:'var(--bs-primary-bg-subtle'
+               })
             }
         }else if(i<startat){
             dateElem.child(0).html(lastdayOfPreviousMonth-(startat-(i+1)))
@@ -531,9 +534,6 @@ if(selectedEvent.subtasks.length==0){
 
 
 }
-
-
-
 
 
 
