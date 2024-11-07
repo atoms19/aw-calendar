@@ -158,7 +158,7 @@ let currentDay=0
                             {class:'badge text-bg-'+event.type},
                             event.name
                         ).addTo(dateElem.child(0))
-                            
+
                     }
                 
             })
@@ -188,6 +188,8 @@ let currentDay=0
 
 
 
+
+
 let currentDate=new Date()
 loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 
@@ -196,12 +198,22 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 let monthUp=()=>{
     currentDate.setMonth(currentDate.getMonth()-1)
 loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+$el(".table").elem.classList.add('animate-up')
+setTimeout(()=>{
+    $el(".table").elem.classList.remove('animate-up')
+},500)
 
 }
 
 let monthDown=()=>{
     currentDate.setMonth(currentDate.getMonth()+1)
 loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+$el(".table").elem.classList.add('animate-down')
+setTimeout(()=>{
+    $el(".table").elem.classList.remove('animate-down')
+},500)
+
+
 
 }
 

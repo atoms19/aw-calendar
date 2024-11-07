@@ -26,7 +26,13 @@
  row-gap: 0.25rem;
  align-items: center;
 }
-
+.animate-up{
+    animation:moveup 0.15s ease-in;
+}
+.animate-down{
+    animation: moveup 0.15s ease-in;
+    animation-direction: reverse;
+}
 .calendar-event{
    max-width: 100%;
 }
@@ -74,4 +80,15 @@
 
 .dragging{
    border:1px solid var(--bs-primary);
+}
+
+@keyframes moveup {
+    0%{
+        transform: translateY(-150%)  rotateX(-150deg);
+    
+    }
+    100%{
+        transform: translateY(0%) ;
+    }
+    
 }
