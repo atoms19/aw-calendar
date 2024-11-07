@@ -295,7 +295,11 @@ function selectDate(date,elem){
         selected.elem.classList.add('selected')
     }
 
+    
+
     updateEventList()
+
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 
