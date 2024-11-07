@@ -84,7 +84,7 @@
 
 @keyframes moveup {
     0%{
-        transform: translateY(-150%)  rotateX(-150deg);
+        transform: translateY(-100%)  rotateX(-150deg);
     
     }
     100%{
