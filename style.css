@@ -1,5 +1,13 @@
 :root{
     scroll-behavior: smooth;
+
+}
+
+[data-bs-theme="dark"]{ 
+    --bs-body-color: #e8e8e8 !important ;
+    --bs-body-color-rgb: 221,221,221;
+    --bs-body-bg: #101112 !important;
+    --bs-body-bg-rgb: 33,37,41;
 }
 
 .table td{
@@ -96,3 +104,4 @@
     }
     
 }
+
