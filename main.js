@@ -552,9 +552,15 @@ if(selectedEvent.subtasks.length==0){
 }
 
 
+let isDarkMode=state(localforage.getItem('isDarkMode')||'off')
 
+if(isDarkMode.value=='auto'){
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.setAttribute('data-bs-theme','dark')
+    }
 
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+}else if(darkMode.value=='on'){
     document.body.setAttribute('data-bs-theme','dark')
-
+}else{
+    document.body.setAttribute('data-bs-theme','light')
 }

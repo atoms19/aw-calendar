@@ -42,7 +42,7 @@
     animation:moveup 0.15s ease-in;
 }
 .animate-down{
-    animation: moveup 0.15s ease-out;
+    animation: moveup 0.15s ease-in;
     animation-direction: reverse;
 }
 .calendar-event{
@@ -96,11 +96,12 @@
 
 @keyframes moveup {
     0%{
-        transform: translateY(-100%)  rotateX(-150deg);
+        transform: translateY(-100%);
+        opacity: 0;
     
     }
     100%{
-        transform: translateY(0%) rotateX(0deg);
+        transform: translateY(0%);
     }
     
 }
