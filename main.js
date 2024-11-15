@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,li,button,i} from 'https://esm.sh/dominity@latest'
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i} from 'https://esm.sh/dominity@latest'
 
 
 localforage.config({
@@ -552,15 +552,15 @@ if(selectedEvent.subtasks.length==0){
 }
 
 
-let isDarkMode=state(localforage.getItem('isDarkMode')||'off')
+let isDarkMode=state('auto')
 
 if(isDarkMode.value=='auto'){
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.body.setAttribute('data-bs-theme','dark')
     }
-
-}else if(darkMode.value=='on'){
+}else if(isDarkMode.value=='on'){
     document.body.setAttribute('data-bs-theme','dark')
 }else{
     document.body.setAttribute('data-bs-theme','light')
 }
+
