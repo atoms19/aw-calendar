@@ -16,6 +16,11 @@
  display: table-cell;
  text-align: center;
 }
+.border-left-only{
+    border-left: 1px solid var(--bs-border-color);
+}
+
+
 .table th{
     text-align: center;
 }
@@ -57,6 +62,9 @@
 }
 
 @media (max-width: 576px) {
+    .border-left-only{
+        border-left: none;
+    }
     .badge{
         padding-right: 0.0rem !important;
         padding-left: 0.0rem !important;

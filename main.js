@@ -295,8 +295,6 @@ function selectDate(date,elem){
         selected.elem.classList.add('selected')
     }
 
-    
-
     updateEventList()
 
     window.scrollTo(0, document.body.scrollHeight);
@@ -310,9 +308,21 @@ function updateEventList(){
 
     if(typeof targetEvents ==typeof []){
         targetEvents.forEach((te)=>{
-
+            let eventChecked=state(te.subtasks.every(task=>task.done))
+            
         
-            li({draggable:'true',class:'list-group-item list-group-item-'+te.type+' d-flex justify-content-between'},te.name,
+            li({draggable:'true',class:'list-group-item list-group-item-'+te.type+' d-flex  align-items-center justify-content-between'},div({class:'d-flex gap-2'},
+                input({class:'form-check-input',type:'checkbox'}).model(eventChecked).showIf(state(te.subtasks.length!=0)).on('change',(e)=>{
+                        te.subtasks.forEach(task=>{
+                            task.done=eventChecked.value
+                        })
+                        localforage.setItem('events',events.value)
+                        updateTaskList()
+                        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+                        updateEventList()
+                    
+                }),
+                span(te.name)),
                 div({class:'d-flex gap-3'},
                     button({class:'btn btn-'+te.type},
                         i({class:'bi bi-trash'})
@@ -321,6 +331,7 @@ function updateEventList(){
                         events.value=events.value.filter((e)=>e.id!=te.id)
                         localforage.setItem('events',events.value)
                         updateEventList()
+                       
                         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
                         
                     })
@@ -499,7 +510,9 @@ d.addTo(tasklist)
 
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5','draggable':'true'},
     div({class:'form-check'},
-        input({class:'form-check-input',type:'checkbox'}).model(done),
+        input({class:'form-check-input',type:'checkbox'}).model(done).on("change",()=>{
+            updateEventList()
+        }),
         label({class:'form-check-label px-2', for:'flexCheckDefault'},t.name)
     ),
     button({class:'btn btn-close btn-sm'}).on("click",()=>{
@@ -508,9 +521,10 @@ d.addTo(tasklist)
         updateTaskList()
     })
 ).addTo(tasklist).on("dragstart",(e)=>{
+    console.log('drag-start-initial-stop')
     tas.elem.classList.add('dragging')
     e.dataTransfer.setData('text/plain',i)
-    $$el('.drop-zone').forEach(d=>{
+   setTimeout(()=>{ $$el('.drop-zone').forEach(d=>{
       
         d.css({
             display:'block',
@@ -519,6 +533,7 @@ d.addTo(tasklist)
             background:'var(--bs-primary-bg-subtle)',
         })
     })
+   },100)
 }).on("dragend",(e)=>{
     tas.elem.classList.remove('dragging')
     $$el('.drop-zone').forEach(d=>{
