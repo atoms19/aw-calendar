@@ -438,6 +438,7 @@ e.preventDefault()
     taskname.value=''
         
     updateTaskList()
+    updateEventList()
     
 })
 
