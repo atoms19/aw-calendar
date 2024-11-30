@@ -8,18 +8,11 @@ localforage.config({
     
 })
 
-
-
-
 let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
-
 let today=new Date()
-
-
-
 
 class swipeDetector{
     constructor(elem){
@@ -72,11 +65,9 @@ class swipeDetector{
 
   
         }
-    }
+}
 
 let events=state(await localforage.getItem('events') || [])
-
-
 
 let selected=0
 
@@ -147,13 +138,12 @@ let currentDay=0
 
             dateElem.child(0).html(i-startat+1)
 
-            events.value.forEach(event=>{
-                    let [day,month,year]=event.date.split('-')
-                    let sampleDate=new Date(year,month-1,day)
+           let  monthlyEvents=events.value.filter((e)=>e.date==`${i-startat+1}-${month+1}-${year}`)
+            monthlyEvents.forEach(event=>{
+                   
 
-                    if(thisDate.getDate()==sampleDate.getDate() && thisDate.getMonth()==sampleDate.getMonth() && thisDate.getFullYear()==sampleDate.getFullYear()){
+                    if(event.date==`${i-startat+1}-${month+1}-${year}`){
                         dateElem.child(0)
-
                         span(
                             {class:'badge text-bg-'+event.type},
                             event.name
@@ -201,7 +191,7 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 $el(".table").elem.classList.add('animate-up')
 setTimeout(()=>{
     $el(".table").elem.classList.remove('animate-up')
-},500)
+},200)
 
 }
 
@@ -211,7 +201,7 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 $el(".table").elem.classList.add('animate-down')
 setTimeout(()=>{
     $el(".table").elem.classList.remove('animate-down')
-},500)
+},200)
 
 
 
@@ -508,7 +498,7 @@ let d=dropZone(i)
 d.addTo(tasklist)
 
 
- let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-5','draggable':'true'},
+ let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-3','draggable':'true'},
     div({class:'form-check'},
         input({class:'form-check-input',type:'checkbox'}).model(done).on("change",()=>{
             updateEventList()
@@ -555,12 +545,6 @@ effect(()=>{
 })
     })
 
-if(selectedEvent.subtasks.length==0){
-    $el('#task-heading').elem.classList.add('d-none')
-
-}else{
-    $el('#task-heading').elem.classList.remove('d-none')
-}
 
 
 
