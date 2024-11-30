@@ -302,7 +302,7 @@ function updateEventList(){
             
         
             li({draggable:'true',class:'list-group-item list-group-item-'+te.type+' d-flex  align-items-center justify-content-between'},div({class:'d-flex gap-2'},
-                input({class:'form-check-input',type:'checkbox'}).model(eventChecked).showIf(state(te.subtasks.length!=0)).on('change',(e)=>{
+                input({class:`form-check-input border-2 border-${te.type}-subtle`,type:'checkbox'}).model(eventChecked).showIf(state(te.subtasks.length!=0)).on('change',(e)=>{
                         te.subtasks.forEach(task=>{
                             task.done=eventChecked.value
                         })
