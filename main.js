@@ -478,11 +478,48 @@ function dropZone(i){
 
     return d
 }
+function promoteToEvent(){
+    let d=div({class:'promotion-zone'},'promote to event').css("display",'none').on('dragover',(e)=>{
+    e.preventDefault()
+     d.css({
+        background:'var(--bs-primary-bg-subtle)'
+     })
+    }).on('drop',(e)=>{
+        convertTaskToEvent(e)
+    })
+    return d
+}
+
+function convertTaskToEvent(te){
+    let data=te.dataTransfer.getData('text/plain')
+        let index=parseInt(data)
+        let task=selectedEvent.subtasks[index]
+
+        let event={
+            name:task.name,
+            date:selectedEvent.date,
+            id:selectedEvent.id+Math.floor(Math.random()*1000),
+            type:selectedEvent.type,
+            isTask:false,
+            subtasks:[{name:'',done:false}],
+            notes:''
+        }
+    
+        events.value=[...events.value,event]
+        selectedEvent.subtasks.splice(index,1)
+
+
+        localforage.setItem('events',events.value)
+        updateTaskList()
+        updateEventList()
+}
 
 function updateTaskList(){
    
     let tasklist=$el('#task-list')
     tasklist.html('')
+    promoteToEvent().addTo(tasklist)
+
   
 
     /*
@@ -490,13 +527,10 @@ function updateTaskList(){
     
     */
    selectedEvent.subtasks.forEach((t,i)=>{
-     
-    let done=state(t.done)
+
+let done=state(t.done)
 let d=dropZone(i)
-
-
 d.addTo(tasklist)
-
 
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-3','draggable':'true'},
     div({class:'form-check'},
@@ -523,6 +557,18 @@ d.addTo(tasklist)
             background:'var(--bs-primary-bg-subtle)',
         })
     })
+
+
+    $el('.promotion-zone').css({
+         height:'3rem',
+         display:'flex',
+         marginBottom:'1rem',
+         justifyContent:'center',
+         alignItems:'center',
+         background:'var(--bs-success-bg-subtle)'
+    })
+  
+
    },100)
 }).on("dragend",(e)=>{
     tas.elem.classList.remove('dragging')
@@ -530,6 +576,11 @@ d.addTo(tasklist)
         d.css({
             height:'0rem'
         })
+    })
+
+    $el('.promotion-zone').css({
+        height:'0rem',
+        display:'none'
     })
 })
 
