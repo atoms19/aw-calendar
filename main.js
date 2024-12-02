@@ -25,7 +25,7 @@ class swipeDetector{
         this.allowedTime=300
         this.threshold=150
         this.restraint=125
-        
+         
     }
 
     start(e){
@@ -220,17 +220,20 @@ let eventConfigForm=$el("#event-config-form")
 let eventConfigClose=$el("#close-event")
 let offCanvasEvent=$el('#offcanvas-event-config')
 
-
-let colorInput=$el('#color-input')
+let colorbind=state('primary')
+let colorInput=$el('#color-input',{
+  class:()=>'form-select bg-'+colorbind.value+'-subtle border-2 border-'+colorbind.value
+})
 
 colorInput.on('change',()=>{
     if(selectedEvent){
         events.value.forEach(e=>{
             if(e==selectedEvent){
-                e.type=colorInput.elem.value
+              e.type=colorInput.elem.value
+              colorbind.value=e.type
             } 
         })
-        colorInput.elem.classList.remove('bg-'+colorInput.elem.value)
+        
         localforage.setItem('events',events.value)
         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
     updateEventList()
@@ -364,6 +367,7 @@ function openEvent(te){
 
     noteTextarea.elem.value=te.note ||''
     colorInput.elem.value=te.type
+    colorbind.value=te.type
     timeInp.elem.value=te.time ||''
     noteDisplay.html(marked.parse(te.note||''))
     renderMathInElement(noteDisplay.elem)
