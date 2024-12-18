@@ -1,4 +1,5 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i} from 'https://esm.sh/dominity@latest'
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i} from "dominity"
+import swipeDetector from "./swipe"
 
 
 localforage.config({
@@ -13,64 +14,11 @@ let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
 let today=new Date()
-
-class swipeDetector{
-    constructor(elem){
-        this.elem=elem
-        this.elem.addEventListener('touchstart',this.start.bind(this))
-        this.elem.addEventListener('touchmove', (e)=>{
-            e.preventDefault() 
-        }, false)
-        this.elem.addEventListener('touchend',this.end.bind(this))
-        this.allowedTime=300
-        this.threshold=150
-        this.restraint=125
-         
-    }
-
-    start(e){
-        this.startX=e.touches[0].clientX
-        this.startY=e.touches[0].clientY
-        this.startTime=Date.now()
-       
-    
-    }
-
-    end(e){
-        this.endX=e.changedTouches[0].clientX
-        this.endY=e.changedTouches[0].clientY
-        this.endTime=Date.now()
-        this.deltaT=this.endTime-this.startTime
-        this.deltaX=this.endX-this.startX
-        this.deltaY=this.endY-this.startY
-        
-
-        
-
-        if( this.deltaT<=this.allowedTime){
-            if(Math.abs(this.deltaX)>=this.threshold && Math.abs(this.deltaY)<=this.restraint){ 
-                if(this.deltaX>0){
-                    this.elem.dispatchEvent(new CustomEvent('swipeleft'))
-                }else{
-                this.elem.dispatchEvent(new CustomEvent('swiperight'))
-                }
-            }else if(Math.abs(this.deltaY)>=this.threshold && Math.abs(this.deltaX)<=this.restraint){
-                if(this.deltaY>0){
-                    this.elem.dispatchEvent(new CustomEvent('swipeup'))
-                }else if(this.deltaY<0){
-                    this.elem.dispatchEvent(new CustomEvent('swipedown'))
-                }
-            }  
-            }
-
-  
-        }
-}
-
 let events=state(await localforage.getItem('events') || [])
-
 let selected=0
 
+
+let istaskMode=state(false)
 function loadCurrentMonth(year,month){
 
     calendarBody.html('')
@@ -126,9 +74,6 @@ let currentDay=0
          loadCurrentMonth(year,month)
          updateEventList()
         })
-
-
-
 
         if(i>=startat && i<lastday+startat){
             let thisDate=new Date(year,month,1)
@@ -261,7 +206,7 @@ eventForm.on('submit',(e)=>{
             name:eventName.value,
             type:'primary',
             isTask:false,
-            subtasks:[],
+            subtasks:istaskMode.value?[{name:'',done:false}]:[],
             notes:''
 
     }]
@@ -289,6 +234,7 @@ function selectDate(date,elem){
     }
 
     updateEventList()
+    
 
     window.scrollTo(0, document.body.scrollHeight);
 }
@@ -357,7 +303,7 @@ timeInp.on('change',()=>{
     }
 })
 
-let selectedEvent;
+export let selectedEvent;
 
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
@@ -373,8 +319,7 @@ function openEvent(te){
     renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
   updateTaskList()
-
-
+ 
 }
 
 
@@ -618,4 +563,17 @@ if(isDarkMode.value=='auto'){
 }else{
     document.body.setAttribute('data-bs-theme','light')
 }
+
+
+$el("#event-chooser").on("click",()=>{
+    if(!istaskMode.value){
+        $el("#event-chooser").html("task-events")
+        istaskMode.value=true
+    }else{
+        $el("#event-chooser").html("events")
+        istaskMode.value=false
+    }
+})
+
+// $el("#add-event-btn").html(()=>istaskMode.value?'add task':'add event')  
 

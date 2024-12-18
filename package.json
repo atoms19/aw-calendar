@@ -1,5 +1,9 @@
 {
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.2",
+    "vite": "^6.0.3"
+  },
+  "dependencies": {
+    "dominity": "^6.3.9"
   }
 }

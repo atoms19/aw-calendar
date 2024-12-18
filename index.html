@@ -27,7 +27,7 @@
           <div id="calendar-main" class="col-lg-9">
           <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
             <h3 id="year-display" class="py-2 pb-0"></h3>
-            <button class="btn btn-primary round-btn my-3" id="myday-btn"><i class="bi bi-menu-button-fill"></i></button>
+            <button class="btn btn-primary round-btn my-3" id="myday-btn"><i class="bi bi-gear"></i></button>
             </div>
             <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
             <h1 id="month-display"></h1>
@@ -63,7 +63,7 @@
               <div class="col-lg-3 border-left-only">
                 <div class="mt-4">
                     <h4 id="selected-date" class="d-sm-none d-md-block"></h4>
-                    <h6 class="text-secondary mt-5">events</h6>
+                    <h6 class="text-secondary mt-5" id="event-chooser">events</h6>
                     
                     <hr/>
                     <form class="form" id="event-form">
@@ -114,7 +114,7 @@
            <div class="btn-group"> 
 
 <input type="checkbox" class="btn-check" id="taginpcheck" autocomplete="off">
-<label for="taginpcheck" id="tag-btn" class="btn btn-primary"><i class="bi bi-tags-fill"></i></label>    
+<label for="taginpcheck" id="exp-btn" class="btn btn-primary"><i class="bi bi-currency-dollar"></i></label>    
 
  <input type="checkbox" class="btn-check" id="locinpcheck" autocomplete="off">
 <label for="locinpcheck" id="loc-btn" class="btn btn-primary"><i class="bi bi-geo-alt-fill"></i></label>  
@@ -131,7 +131,7 @@
 
           </div>
 
- <div id='tasks-section' class="d-noe" >
+ <div id='tasks-section' >
 
 
 
@@ -153,6 +153,41 @@
             <label class="mt-1 form-label">notes</label>
   <textarea placeholder="type your notes here ,markdown tips: # headings , **bold** _italic_ `code` ~strikethrough~" id="note-text" class="form-control" style="height:500px;"></textarea>
        
+          </div>
+
+          <div class="d-none mt-3" id="exp-edit">
+
+            
+
+<div id="exp-list"></div>
+            
+              <form class="flex gap-2" id="spendform">
+                <select placeholder="select category" class="form-select" id="cat-select">
+                  <option selected disabled>category</option>
+                  <option value="food ">🍔food</option>
+                  <option value="transport">🚗transport</option>
+                  <option value="entertainment">🎉entertainment</option>
+                  <option value="health">💊health</option>
+
+                </select>
+                <input class="form-control form-control-md" id="nameinp" placeholder="enter expense info" type="text">
+              <input class="form-control form-control-md" id="spendinp" placeholder="enter expense amount" type="number">
+              <a class="text-danger-emphasis m-4  ">add a new category</a>
+              <div class="input-group mb-3">
+              <button class="  btn btn-danger btn-md" id="spendinp-add"><i class="bi fs-5 bi-plus"></i></button>
+              <button type="button" class="btn btn-outline-danger dropdown-toggle dropdown-toggle-split" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li ><a class="dropdown-item" href="#" >close</a></li>
+              </ul>
+              </div>
+              </form>
+              
           </div>
 
 
@@ -177,13 +212,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 
-
+    
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-light.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.3/marked.min.js" integrity="sha512-kZ9BCD8vqCw2vJ1XG3EVZN5M5aRNxxMK3+uYuZPWc+TtW2Z1zSgmFlTIVHYHaWH0bH2lp2dUlB/1+M1h+lvfeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js" integrity="sha512-+BMamP0e7wn39JGL8nKAZ3yAQT2dL5oaXWr4ZYlTGkKOaoXM/Yj7c4oy50Ngz5yoUutAG17flueD4F6QpTlPng==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
- <script  type="module" src="main.js"></script>
+<script defer src="rakshasa.js"></script> 
+<script  type="module" src="main.js"></script>
+ <script type="module" src="moneyManger.js"></script>
+ 
   
 </body>
 </html>
