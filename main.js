@@ -14,13 +14,14 @@ let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
 async function  getEvents() {
-    return await localforage.getItem('events')
+    events.value= await localforage.getItem('events')
 }
 
 let today=new Date()
-let events=state( getEvents() || [])
+let events=state([])
 let selected=0
 
+getEvents()
 
 let istaskMode=state(false)
 function loadCurrentMonth(year,month){
