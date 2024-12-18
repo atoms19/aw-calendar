@@ -13,8 +13,12 @@ let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
+async function  getEvents() {
+    return await localforage.getItem('events')
+}
+
 let today=new Date()
-let events=state(await localforage.getItem('events') || [])
+let events=state( getEvents() || [])
 let selected=0
 
 
@@ -554,15 +558,19 @@ effect(()=>{
 
 let isDarkMode=state('auto')
 
-if(isDarkMode.value=='auto'){
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+effect(()=>{
+    if(isDarkMode.value=='auto'){
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.setAttribute('data-bs-theme','dark')
+        }
+    }else if(isDarkMode.value=='on'){
         document.body.setAttribute('data-bs-theme','dark')
+    }else{
+        document.body.setAttribute('data-bs-theme','light')
     }
-}else if(isDarkMode.value=='on'){
-    document.body.setAttribute('data-bs-theme','dark')
-}else{
-    document.body.setAttribute('data-bs-theme','light')
-}
+
+})
+
 
 
 $el("#event-chooser").on("click",()=>{
@@ -577,3 +585,10 @@ $el("#event-chooser").on("click",()=>{
 
 // $el("#add-event-btn").html(()=>istaskMode.value?'add task':'add event')  
 
+let s=['light','dark','auto']
+let ic=0
+$el('#myday-btn').on('click',()=>{
+    isDarkMode.value=s[ic%s.length]
+    ic+=1
+
+})
