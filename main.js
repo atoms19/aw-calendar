@@ -655,7 +655,13 @@ $el('#exp-btn').on('click',()=>{
 let amount=state(null)
 let info=state(null)
 
-let categories=state(await localforage.getItem('categories')||['🍔 food','🚌 transport','🍿entertainment','🏃 health','🎓 education','🛒 shoping','🤔 other'])
+let categories=state([])
+
+async function loadCategories(){
+    categories.value=await localforage.getItem('categories') ||['🍔 food','🚌 transport','🍿entertainment','🏃 health','🎓 education','🛒 shoping','🤔 other']
+}
+
+loadCategories()
 
 $el('#cat-select').html('').forEvery(categories,(c,i)=>{
 
