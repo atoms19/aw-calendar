@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2} from "dominity"
 import swipeDetector from "./swipe"
 
 
@@ -13,12 +13,25 @@ let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
+let destroyer
+monthDisplay.on('click',async()=>{
+    $el('#calendar-section').elem.classList.add('d-none')
+    $el('#month-view').elem.classList.remove('d-none')
+    destroyer=await renderChart()
+})
+
+$el('#back-btn').on('click',()=>{
+    $el('#calendar-section').elem.classList.remove('d-none')
+    $el('#month-view').elem.classList.add('d-none')
+    console.log(destroyer())
+})
+
 async function  getEvents() {
     events.value= await localforage.getItem('events')
 }
 
 let today=new Date()
-let events=state([])
+export let events=state([])
 let selected=0
 
 getEvents()
@@ -131,7 +144,11 @@ let currentDay=0
 
 
 let currentDate=new Date()
-loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+setTimeout(()=>{
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+},200)
 
 
 
@@ -310,8 +327,15 @@ timeInp.on('change',()=>{
 
 export let selectedEvent;
 
+let eventTransactions=state([])
+
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
+
+    $$el('.menu-target').forEach(el=>{
+        if($el('#'+el.attr('for')).elem.checked) el.elem.click()  //automatically close all edit options when opening a new event 
+        
+    })
     console.log('event has been opened ')
     selectedEvent=te
     noteDisplay.html('')
@@ -320,12 +344,27 @@ function openEvent(te){
     colorInput.elem.value=te.type
     colorbind.value=te.type
     timeInp.elem.value=te.time ||''
+    if(te.transactions){
+        eventTransactions.value=te.transactions
+
+    }
     noteDisplay.html(marked.parse(te.note||''))
     renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
   updateTaskList()
  
 }
+
+$el('#transaction-list').forEvery(eventTransactions,(e)=>{
+    return li({class:'list-group-item d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto'},'💵'+e.amount),
+    button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
+        eventTransactions.value=eventTransactions.value.filter(t=>t.info1=e.info && t.amount!=e.amount)
+        localforage.setItem('events',events.value)
+
+    })
+)
+})
+
 
 
 let noteDisplay=$el("#note-display")
@@ -400,6 +439,7 @@ taskBtn.on("click",()=>{
     taskInp.elem.classList.toggle('d-none')
     
 })
+
 
 
 function dropZone(i){
@@ -558,17 +598,28 @@ effect(()=>{
 
 
 let isDarkMode=state('auto')
+let themed=async ()=>{
+    isDarkMode.value=await localforage.getItem('theme')
+}
+
+themed()
 
 effect(()=>{
     if(isDarkMode.value=='auto'){
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.setAttribute('data-bs-theme','dark')
+            
         }
-    }else if(isDarkMode.value=='on'){
+        console.log('auto')
+    }else if(isDarkMode.value=='dark'){
         document.body.setAttribute('data-bs-theme','dark')
+        console.log('dark')
     }else{
         document.body.setAttribute('data-bs-theme','light')
+        console.log('light')
     }
+
+    localforage.setItem('theme',isDarkMode.value)
 
 })
 
@@ -593,3 +644,210 @@ $el('#myday-btn').on('click',()=>{
     ic+=1
 
 })
+
+import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
+
+$el('#exp-btn').on('click',()=>{
+    $el('#exp-edit').elem.classList.toggle('d-none')
+})
+
+
+let amount=state(null)
+let info=state(null)
+
+let categories=state(await localforage.getItem('categories')||['🍔 food','🚌 transport','🍿entertainment','🏃 health','🎓 education','🛒 shoping','🤔 other'])
+
+$el('#cat-select').html('').forEvery(categories,(c,i)=>{
+
+    return option({value:c},c)
+    
+})
+
+$el('#spendinp').model(amount)
+$el('#nameinp').model(info)
+
+
+$el('#spendform').on('submit',e=>{
+    e.preventDefault()
+
+    if(!selectedEvent || info.value.trim()=='' || amount.value==0){
+        return
+    }
+
+
+    
+
+    if(!selectedEvent.transactions){
+        selectedEvent.transactions=[]
+    }
+
+    selectedEvent.transactions.push({
+        amount:amount.value,
+        info:info.value,
+        categories: Array.from($el('#cat-select').elem.selectedOptions).map(option => option.value),
+    })
+
+   eventTransactions.value=[...selectedEvent.transactions]
+
+    info.value=''
+    amount.value=0
+
+    localforage.setItem('events',events.value)
+    
+})
+
+let totalSum=state(0)
+
+
+
+function getDataSet(year,month){
+
+    function getCategorySum(category){
+        let catSum=0
+
+        events.value.filter((e)=>e.date.includes(`-${month+1}-${year}`)).forEach(e=>{
+
+            
+            if (e.transactions!=undefined){
+            
+            e.transactions.forEach(t=>{
+                if(t.categories.includes(category)){
+                    catSum+=t.amount
+                }
+    
+            })
+        }
+            
+        })
+
+        return catSum
+    
+    }
+
+    return categories.value.map(category=>{
+
+        return getCategorySum(category)
+    })
+    
+   
+}
+
+
+
+
+async function renderChart() {
+
+    let can= document.getElementById('pie-canvas')
+    can.width=window.innerWidth/2 
+    can.height=window.innerHeight/2
+   let geneventData=getDataSet(currentDate.getFullYear(),currentDate.getMonth())
+
+   
+const data = {
+    labels:categories.value,
+    datasets: [{
+      label: currentDate.toLocaleDateString('default',{month:'long'}),
+      data: geneventData,
+      backgroundColor: [
+        'rgb(99, 138, 255)',
+        'rgb(75, 192, 124)',
+        'rgb(255, 205, 86)',
+        'rgb(201, 203, 207)',
+        'rgb(235, 102, 54)',
+        'rgb(193, 99, 255)',
+        'rgb(192, 75, 161)',
+        'rgb(185, 255, 86)',
+        'rgb(29, 186, 210)',
+        'rgb(90, 76, 161)'
+      ]
+    }]
+  };
+ 
+  
+    Chart.register(PieController);
+    Chart.register(RadialLinearScale)
+    Chart.register(ArcElement)
+    Chart.register(Tooltip)
+    Chart.register(Legend)
+    
+    let l= new Chart(
+     can,
+      {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive:false,
+            width: 400, // Set the width of the canvas
+            height: 200,
+           
+           plugins:{
+        
+            legend:{
+                
+                
+            }
+           },
+           animation: {
+            onComplete: function(animation) {
+                //alert('onAnimationComplete');
+                
+                let fulldata=getDataSet(currentDate.getFullYear(),currentDate.getMonth())
+                let sum=fulldata.reduce((a,b)=>a+b,0)
+                   Object.keys(animation.chart._hiddenIndices).forEach((key) => {
+                        if(animation.chart._hiddenIndices[key]){
+                            sum-=fulldata[key]
+                        }
+                      
+                   })
+                totalSum.value=sum
+                
+                
+            }
+        }
+        }
+      }
+    );
+
+    $el('#cat-list-editor').forEvery(categories,(c,index)=>{
+        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(`💵 ${geneventData[index]}`,
+        button({class:'btn btn-sm btn-danger'},i({class:'bi bi-trash'})).on('click',()=>{
+            categories.value=categories.value.filter(cat=>cat!=c)
+            localforage.setItem('categories',categories.value)
+        })))
+    })
+
+
+    
+    return ()=>l.destroy()
+
+  }
+  
+
+  $el('#tally','total tallied : 💵',totalSum)
+
+  //renderChart()
+
+  let isModalOpen=state(false)
+$el('.modal').bindClass(isModalOpen,'show').on('click',()=>isModalOpen.value=false)
+$el('.modal-content').on('click',e=>e.stopPropagation()) 
+
+$el('.modal-close').on('click',()=>isModalOpen.value=false)
+
+$el('#cat-add').on('click',()=>isModalOpen.value=true)
+
+let newCatName=state('')
+
+$el('#cat-nameInp').model(newCatName)
+
+$el('#cat-adder').on('click',()=>{
+
+    if(newCatName.value.trim()==''){    
+        return
+    }
+    categories.value=[...categories.value,newCatName.value]
+
+    localforage.setItem('categories',categories.value)
+    newCatName.value=''
+    isModalOpen.value=false
+})
+

@@ -22,7 +22,8 @@
 
    </head>
 <body data-bs-theme="light">
- <div class="container" id="calendar-section">
+ <div class="container " id="calendar-section">
+  
       <div class="row">
           <div id="calendar-main" class="col-lg-9">
           <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
@@ -114,16 +115,16 @@
            <div class="btn-group"> 
 
 <input type="checkbox" class="btn-check" id="taginpcheck" autocomplete="off">
-<label for="taginpcheck" id="exp-btn" class="btn btn-primary"><i class="bi bi-currency-dollar"></i></label>    
+<label for="taginpcheck" id="exp-btn" class="btn menu-target btn-primary"><i class="bi bi-currency-dollar"></i></label>    
 
  <input type="checkbox" class="btn-check" id="locinpcheck" autocomplete="off">
-<label for="locinpcheck" id="loc-btn" class="btn btn-primary"><i class="bi bi-geo-alt-fill"></i></label>  
+<label for="locinpcheck" id="loc-btn" class="btn menu-target btn-primary"><i class="bi bi-geo-alt-fill"></i></label>  
 
 <input type="checkbox" class="btn-check" id="taskinpcheck" autocomplete="off">
-<label for="taskinpcheck" id="task-btn" class="btn btn-primary"><i class="bi bi-ui-checks"></i></label>
+<label for="taskinpcheck" id="task-btn" class="btn menu-target btn-primary"><i class="bi bi-ui-checks"></i></label>
 
 <input type="checkbox" class="btn-check" id="eventinpcheck" autocomplete="off">
-<label for="eventinpcheck" class="btn btn-primary" id="edit-btn"><i class="bi bi-pencil-square"></i></label>
+<label for="eventinpcheck" class="btn  menu-target btn-primary" id="edit-btn"><i class="bi bi-pencil-square"></i></label>
           </div>
  </div>
 <div id="note-display">
@@ -162,31 +163,35 @@
 <div id="exp-list"></div>
             
               <form class="flex gap-2" id="spendform">
-                <select placeholder="select category" class="form-select" id="cat-select">
-                  <option selected disabled>category</option>
-                  <option value="food ">🍔food</option>
-                  <option value="transport">🚗transport</option>
-                  <option value="entertainment">🎉entertainment</option>
-                  <option value="health">💊health</option>
 
-                </select>
-                <input class="form-control form-control-md" id="nameinp" placeholder="enter expense info" type="text">
+                <div class="input-group">
+                  <select placeholder="select category" multiple class="form-select" id="cat-select">
+                    <option selected disabled>category</option>
+                    <option value="food ">🍔food</option>
+                    <option value="transport">🚗transport</option>
+                    <option value="entertainment">🎉entertainment</option>
+                    <option value="health">💊health</option>
+  
+                  </select>
+              
+
+
+                </div>
+             
+                <div class="input-group">
+                  <input class="form-control form-control-md" id="nameinp" placeholder="enter expense info" type="text">
               <input class="form-control form-control-md" id="spendinp" placeholder="enter expense amount" type="number">
-              <a class="text-danger-emphasis m-4  ">add a new category</a>
-              <div class="input-group mb-3">
-              <button class="  btn btn-danger btn-md" id="spendinp-add"><i class="bi fs-5 bi-plus"></i></button>
-              <button type="button" class="btn btn-outline-danger dropdown-toggle dropdown-toggle-split" aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li ><a class="dropdown-item" href="#" >close</a></li>
-              </ul>
+
+                </div>
+                           
+              <div class="input-group mt-3 justify-content-center w-100 w-full mb-3">
+              <button class="  btn btn-danger  btn-md d-flex justify-content-center align-items-center" id="spendinp-add">add expense<i class="bi fs-5 bi-plus"></i></button>
               </div>
               </form>
+
+              <div class="list-group" id="transaction-list">
+
+              </div>
               
           </div>
 
@@ -196,8 +201,66 @@
     </div>
 
 
+<div class="container d-none" id="month-view">
+<nav class="navbar navbar-expand-lg ">
+ <button class="btn btn-outline" id="back-btn">
+ <i class="bi bi-chevron-left"></i>
 
-    
+  </button>
+
+</nav>
+<h1>Monthly Overview</h1>
+<h3 class="bg-secondary-subtle">expense summary</h3>
+
+
+  <div class="w-100 d-flex md-flex-row flex-column md-justify-content-center align-items-center">
+  <canvas id="pie-canvas" class="mt-3"></canvas>
+
+    <div>
+      <h2 id="tally"></h2>
+      <ul class="list-group" id="cat-list-editor">
+  
+      </ul>
+      <button class=" mt-3 w-100 btn btn-danger  btn-md" id="cat-add">add a category<i class="bi fs-5 bi-plus"></i></button>
+    </div>
+</div>
+
+
+
+
+</div>
+
+
+<div id="myModal" class="modal animate-up  show">
+   <div class="modal-dialog">
+     <div class="modal-content"> 
+      <div class="modal-header"> 
+        <h5 class="modal-title">Enter New Category</h5> 
+        <button type="button" class="btn btn-close modal-close" ></button> 
+      </div> 
+      <div class="modal-body"> 
+      
+          <div class="form-group"> 
+            <label for="categoryName">Category Name</label> 
+            <input type="text" class="form-control" id="cat-nameInp" placeholder="Enter category name"> 
+          </div>
+         
+         <div class="alert mt-3 alert-warning" role="alert">
+         <p class="mb-0">
+           <i class="bi bi-exclamation-triangle-fill"></i>
+           <span>a custom category should be unique and the name should start with an emoji with a space seperating it from the actual name </span> like
+           <code class="bg-warning-subtle">🍔 food</code>
+         </p>
+         </div>
+          <div class="modal-footer">
+              <button type="button" id="cat-adder" class="btn btn-primary">add category</button>
+          </div>
+       </div>
+     </div>
+</div>
+
+
+
 
 
 
@@ -213,7 +276,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 
     
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-light.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.3/marked.min.js" integrity="sha512-kZ9BCD8vqCw2vJ1XG3EVZN5M5aRNxxMK3+uYuZPWc+TtW2Z1zSgmFlTIVHYHaWH0bH2lp2dUlB/1+M1h+lvfeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

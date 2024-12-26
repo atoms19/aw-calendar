@@ -114,3 +114,8 @@
     
 }
 
+.modal.show { display: block;
+padding-top: 1rem;
+background-color: #10111256;
+}
+
