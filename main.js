@@ -346,7 +346,8 @@ function openEvent(te){
     timeInp.elem.value=te.time ||''
     if(te.transactions){
         eventTransactions.value=te.transactions
-
+    }else{
+        eventTransactions.value=[]
     }
     noteDisplay.html(marked.parse(te.note||''))
     renderMathInElement(noteDisplay.elem)
@@ -355,7 +356,7 @@ function openEvent(te){
  
 }
 
-$el('#transaction-list').forEvery(eventTransactions,(e)=>{
+$el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
     return li({class:'list-group-item d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto'},'💵'+e.amount),
     button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1=e.info && t.amount!=e.amount)
