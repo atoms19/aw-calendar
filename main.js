@@ -816,8 +816,8 @@ const data = {
     );
 
     $el('#cat-list-editor').forEvery(categories,(c,index)=>{
-        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(`💵 ${geneventData[index]}`,
-        button({class:'btn btn-sm btn-danger'},i({class:'bi bi-trash'})).on('click',()=>{
+        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(span(`💵 ${geneventData[index]}`),
+        button({class:'btn ml-3 btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
             categories.value=categories.value.filter(cat=>cat!=c)
             localforage.setItem('categories',categories.value)
         })))
