@@ -1,5 +1,6 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2} from "dominity"
 import swipeDetector from "./swipe"
+import { formatMoney, removeFormatting } from "./utils"
 
 
 localforage.config({
@@ -357,7 +358,7 @@ function openEvent(te){
 }
 
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto'},'💵'+e.amount),
+    return li({class:'list-group-item d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto text-danger'},'-'+formatMoney(e.amount)+'💵'),
     button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1=e.info && t.amount!=e.amount)
         localforage.setItem('events',events.value)
@@ -670,7 +671,9 @@ $el('#cat-select').html('').forEvery(categories,(c,i)=>{
     
 })
 
-$el('#spendinp').model(amount)
+$el('#spendinp').model(amount).on('input',e=>{
+    amount.value=formatMoney(parseFloat(removeFormatting(e.target.value)||0))
+})
 $el('#nameinp').model(info)
 
 
@@ -689,7 +692,7 @@ $el('#spendform').on('submit',e=>{
     }
 
     selectedEvent.transactions.push({
-        amount:amount.value,
+        amount:removeFormatting(amount.value),
         info:info.value,
         categories: Array.from($el('#cat-select').elem.selectedOptions).map(option => option.value),
     })
@@ -816,7 +819,8 @@ const data = {
     );
 
     $el('#cat-list-editor').forEvery(categories,(c,index)=>{
-        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(span(`💵 ${geneventData[index]}`),
+        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(span(`💵 ${formatMoney(geneventData[index])}`),
+        input({type:'checkbox',class:'form-check-input',id:`cat${c}`}),
         button({class:'btn ml-3 btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
             categories.value=categories.value.filter(cat=>cat!=c)
             localforage.setItem('categories',categories.value)
@@ -830,7 +834,7 @@ const data = {
   }
   
 
-  $el('#tally','total tallied : 💵',totalSum)
+  $el('#tally','total tallied : ',span({class:'text-danger'},'-',()=>formatMoney(totalSum.value),'💵'))
 
   //renderChart()
 
