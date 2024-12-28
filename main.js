@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived} from "dominity"
 import swipeDetector from "./swipe"
 import { formatMoney, removeFormatting } from "./utils"
 
@@ -14,21 +14,28 @@ let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
-let destroyer
+let destroyer,destroyer2
 monthDisplay.on('click',async()=>{
     $el('#calendar-section').elem.classList.add('d-none')
     $el('#month-view').elem.classList.remove('d-none')
-    destroyer=await renderChart()
+    destroyer=await renderChart('pie-canvas')
+    destroyer2=await renderChart('pie-canvas-income','income')
+
+    
+
+  
+   
 })
 
 $el('#back-btn').on('click',()=>{
     $el('#calendar-section').elem.classList.remove('d-none')
     $el('#month-view').elem.classList.add('d-none')
     console.log(destroyer())
+    destroyer2()
 })
 
 async function  getEvents() {
-    events.value= await localforage.getItem('events')
+    events.value= await localforage.getItem('events') || []
 }
 
 let today=new Date()
@@ -278,6 +285,10 @@ function updateEventList(){
                         te.subtasks.forEach(task=>{
                             task.done=eventChecked.value
                         })
+                        if(eventChecked.value){
+                            sound.play()
+                        }
+
                         localforage.setItem('events',events.value)
                         updateTaskList()
                         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -358,14 +369,15 @@ function openEvent(te){
 }
 
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto text-danger'},'-'+formatMoney(e.amount)+'💵'),
+    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
     button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1=e.info && t.amount!=e.amount)
         localforage.setItem('events',events.value)
 
-    })
+    }))
 )
 })
+
 
 
 
@@ -412,6 +424,9 @@ fb.on('swipedown',monthDown)
 
 let taskBtn=$el("#task-btn")
 let taskInp=$el("#task-input")
+
+let sound=new Audio('./success.mp3')
+sound.preload='auto'
 
 
 
@@ -532,6 +547,9 @@ d.addTo(tasklist)
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-3','draggable':'true'},
     div({class:'form-check'},
         input({class:'form-check-input',type:'checkbox'}).model(done).on("change",()=>{
+            if(done.value){
+                sound.play()
+            }
             updateEventList()
         }),
         label({class:'form-check-label px-2', for:'flexCheckDefault'},t.name)
@@ -656,25 +674,30 @@ $el('#exp-btn').on('click',()=>{
 
 let amount=state(null)
 let info=state(null)
-
+let tType=state('expense')
 let categories=state([])
 
 async function loadCategories(){
-    categories.value=await localforage.getItem('categories') ||['🍔 food','🚌 transport','🍿entertainment','🏃 health','🎓 education','🛒 shoping','🤔 other']
+    categories.value=await localforage.getItem('categories') ||[]
 }
 
 loadCategories()
+let catOptions=derived(()=>categories.value.filter(c=>c.type==tType.value))
 
-$el('#cat-select').html('').forEvery(categories,(c,i)=>{
-
-    return option({value:c},c)
-    
+$el('#cat-select').html('').forEvery(catOptions,(c,i)=>{
+    return option({value:c.name},c.name||c)
 })
 
 $el('#spendinp').model(amount).on('input',e=>{
     amount.value=formatMoney(parseFloat(removeFormatting(e.target.value)||0))
 })
 $el('#nameinp').model(info)
+$el('#economy-select').model(tType)
+
+let isIncome=derived(()=>tType.value=='income')
+$el('#spendinp-add').bindClass(isIncome,'btn-primary','btn-danger').html(()=>isIncome.value?'add income':'add expense')
+
+
 
 
 $el('#spendform').on('submit',e=>{
@@ -694,6 +717,7 @@ $el('#spendform').on('submit',e=>{
     selectedEvent.transactions.push({
         amount:removeFormatting(amount.value),
         info:info.value,
+        type:tType.value,
         categories: Array.from($el('#cat-select').elem.selectedOptions).map(option => option.value),
     })
 
@@ -706,37 +730,43 @@ $el('#spendform').on('submit',e=>{
     
 })
 
-let totalSum=state(0)
 
 
 
-function getDataSet(year,month){
+function getDataSet(year,month,listed='expense'){
+    
 
     function getCategorySum(category){
         let catSum=0
-
         events.value.filter((e)=>e.date.includes(`-${month+1}-${year}`)).forEach(e=>{
-
-            
             if (e.transactions!=undefined){
-            
+
             e.transactions.forEach(t=>{
                 if(t.categories.includes(category)){
+                    if(t.type){
+                        if(t.type==listed){
+                            catSum+=t.amount
+                        }
+                    }else{
                     catSum+=t.amount
-                }
+                    }
+            }
     
             })
         }
-            
         })
-
         return catSum
-    
     }
 
-    return categories.value.map(category=>{
+    return categories.value.filter(c=>{
+        if (c.type){
+            return c.type==listed
+        }else{
+            return true 
+        }
+    }).map(category=>{
 
-        return getCategorySum(category)
+        return getCategorySum(category.name || category)
     })
     
    
@@ -745,16 +775,17 @@ function getDataSet(year,month){
 
 
 
-async function renderChart() {
+async function renderChart(canva,listed='expense') {
 
-    let can= document.getElementById('pie-canvas')
+    let can= document.getElementById(canva)
     can.width=window.innerWidth/2 
     can.height=window.innerHeight/2
-   let geneventData=getDataSet(currentDate.getFullYear(),currentDate.getMonth())
+   let geneventData=getDataSet(currentDate.getFullYear(),currentDate.getMonth(),listed)
+let totalSum=state(0)
 
    
 const data = {
-    labels:categories.value,
+    labels:categories.value.filter(c=>c.type==listed).map(c=>c.name || c),
     datasets: [{
       label: currentDate.toLocaleDateString('default',{month:'long'}),
       data: geneventData,
@@ -789,25 +820,16 @@ const data = {
             responsive:false,
             width: 400, // Set the width of the canvas
             height: 200,
-           
-           plugins:{
-        
-            legend:{
-                
-                
-            }
-           },
            animation: {
             onComplete: function(animation) {
                 //alert('onAnimationComplete');
                 
-                let fulldata=getDataSet(currentDate.getFullYear(),currentDate.getMonth())
+                let fulldata=getDataSet(currentDate.getFullYear(),currentDate.getMonth(),listed)
                 let sum=fulldata.reduce((a,b)=>a+b,0)
                    Object.keys(animation.chart._hiddenIndices).forEach((key) => {
                         if(animation.chart._hiddenIndices[key]){
                             sum-=fulldata[key]
                         }
-                      
                    })
                 totalSum.value=sum
                 
@@ -818,23 +840,51 @@ const data = {
       }
     );
 
-    $el('#cat-list-editor').forEvery(categories,(c,index)=>{
-        return li({class:'list-group-item d-flex justify-content-between align-items-center'},c,span(span(`💵 ${formatMoney(geneventData[index])}`),
-        input({type:'checkbox',class:'form-check-input',id:`cat${c}`}),
-        button({class:'btn ml-3 btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
-            categories.value=categories.value.filter(cat=>cat!=c)
+    let categoryDisplay=derived(()=>categories.value.filter(c=>c.type==listed))
+
+    $el(`#cat-list-${listed}-editor`).forEvery(categoryDisplay,(c,index)=>{
+        return li({class:'list-group-item d-flex justify-content-between align-items-center',},c.name||c,span(span(`💵 ${formatMoney(geneventData[index])}`),
+        
+        button({class:'btn btn-sm ml-5'},i({class:'bi bi-trash'})).on('click',(e)=>{
+            e.stopPropagation()
+           if(confirm(`are you sure you want to delete ${c.name||c}?`)){ 
+            categories.value=categories.value.filter(cat=>(cat.name||cat)!=(c.name||c))
             localforage.setItem('categories',categories.value)
-        })))
+           }
+        }))).on('click',(event)=>{
+            $el('#list-'+listed).html('')
+            events.value.filter((e)=>e.date.includes(`-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`)).forEach(e=>{
+                if(e.transactions){
+
+                    e.transactions.forEach(t=>{
+                        if(t.categories.includes(c.name||c)){
+                            li({class:'list-group-item justify-content-between d-flex'},div(t.info),div({class:'ms-auto '+(t.type=='income' ? 'text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+'💵',
+                            button( {class:'btn btn-sm'},e.date,'  from ',e.name).on('click',(s)=>{
+                                s.stopPropagation()
+                                selectedEvent=e
+                                openEvent(e)
+                            })
+                        )).addTo($el('#list-'+listed))
+                        }
+                    })
+                }
+    
+            })
+            
+        })
     })
 
+  $el('#tally-'+listed,'visible sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(totalSum.value),'💵'))
+$el('#actual-'+listed,'total sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(calculateMonthlySum(currentDate.getMonth(),listed)),'💵'))
 
-    
-    return ()=>l.destroy()
-
+    return ()=>{
+        $el('#tally-'+listed).html('')
+        $el('#actual-'+listed).html('')
+        l.destroy()
+    }
   }
   
 
-  $el('#tally','total tallied : ',span({class:'text-danger'},'-',()=>formatMoney(totalSum.value),'💵'))
 
   //renderChart()
 
@@ -844,21 +894,72 @@ $el('.modal-content').on('click',e=>e.stopPropagation())
 
 $el('.modal-close').on('click',()=>isModalOpen.value=false)
 
-$el('#cat-add').on('click',()=>isModalOpen.value=true)
+$el('#cat-add').on('click',()=>{
+    isModalOpen.value=true
+    catType.value='expense'
+})
+
+$el('#cat-income-add').on('click',()=>{
+    isModalOpen.value=true
+    catType.value='income'
+})
 
 let newCatName=state('')
+let catType=state('expense')
+let isSubCat=state(false)
+
+$el('#cat-type').model(catType)
 
 $el('#cat-nameInp').model(newCatName)
-
+$el('#is-subcat').model(isSubCat)
 $el('#cat-adder').on('click',()=>{
 
     if(newCatName.value.trim()==''){    
         return
     }
-    categories.value=[...categories.value,newCatName.value]
+    categories.value=[...categories.value,{
+        name:newCatName.value,
+        type:catType.value,
+        isSubCat:isSubCat.value
+    }]
 
     localforage.setItem('categories',categories.value)
     newCatName.value=''
     isModalOpen.value=false
+    
 })
+
+
+
+let tabVisible=state('expense')
+
+$$el('.tab-chooser').forEach(e=>{
+    let isActive=derived(()=>tabVisible.value==e.attr('data-tab'))
+    e.bindClass(isActive,'active')
+    e.on('click',()=>{
+        tabVisible.value=e.attr('data-tab')
+    })
+})
+
+$$el('.tab-children').forEach(e=>{
+    e.showIf(()=>tabVisible.value==e.attr('tab-name'))
+})
+
+
+
+function calculateMonthlySum(month,listed='expense'){
+    let sum=0
+    events.value.filter((e)=>e.date.includes(`-${month+1}-${currentDate.getFullYear()}`)).forEach(e=>{
+        if(e.transactions){
+            e.transactions.forEach(t=>{
+                if(t.type==listed){
+                    sum+=t.amount
+                }
+            })
+        }
+    })
+    return sum   
+}
+
+
 
