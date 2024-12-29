@@ -21,6 +21,8 @@ monthDisplay.on('click',async()=>{
     destroyer=await renderChart('pie-canvas')
     destroyer2=await renderChart('pie-canvas-income','income')
 
+    $el('#total-gross',{class:'mt-5'}).html('total gross : '+formatMoney(-calculateMonthlySum(currentDate.getMonth(),'expense')+calculateMonthlySum(currentDate.getMonth(),'income'))+'💵')
+
     
 
   
@@ -952,7 +954,9 @@ function calculateMonthlySum(month,listed='expense'){
     events.value.filter((e)=>e.date.includes(`-${month+1}-${currentDate.getFullYear()}`)).forEach(e=>{
         if(e.transactions){
             e.transactions.forEach(t=>{
-                if(t.type==listed){
+                if(t.type==undefined){
+                    sum+=t.amount
+                }else if(t.type==listed){
                     sum+=t.amount
                 }
             })
