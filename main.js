@@ -341,7 +341,7 @@ timeInp.on('change',()=>{
 
 export let selectedEvent;
 
-let eventTransactions=state([])
+
 
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
@@ -370,15 +370,7 @@ function openEvent(te){
  
 }
 
-$el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
-    button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
-        eventTransactions.value=eventTransactions.value.filter(t=>t.info1=e.info && t.amount!=e.amount)
-        localforage.setItem('events',events.value)
 
-    }))
-)
-})
 
 
 
@@ -667,7 +659,24 @@ $el('#myday-btn').on('click',()=>{
 
 })
 
+//----------------------------------expense tracker ---------------------------------------------------
+
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
+
+let eventTransactions=state([])
+
+$el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
+    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
+    button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
+        eventTransactions.value=eventTransactions.value.filter(t=>t.info1!=e.info && t.amount!=e.amount)
+        selectedEvent.transactions=eventTransactions.value
+        localforage.setItem('events',events.value)
+
+    }))
+)
+})
+
+
 
 $el('#exp-btn').on('click',()=>{
     $el('#exp-edit').elem.classList.toggle('d-none')
@@ -931,7 +940,7 @@ $el('#cat-adder').on('click',()=>{
     
 })
 
-
+//tab system--------------------------------------------
 
 let tabVisible=state('expense')
 
@@ -964,6 +973,33 @@ function calculateMonthlySum(month,listed='expense'){
     })
     return sum   
 }
+// habbit tracker -----------------------------------------------------------------------
+
+let habits =state([])
+
+
+/* $el('#habits-display',
+    div({class:'d-flex flex-column gap-y-2 '},
+            li({class:'py-2 mt-4 px-4 rounded w-100 bg-secondary-subtle d-flex justify-content-between align-items-center'},
+                div({class:'text-bold d-flex align-items-center gap-x-2'},span({class:'color-badge'}).css({
+                    
+                }),'habit name'),
+                div({class:'d-flex '},
+                    input({class:'form-check-input habit-check',type:'checkbox'})
+                )
+            ),
+            li({class:'py-2 px-4 mt-2 rounded w-100 bg-secondary-subtle d-flex justify-content-between align-items-center'},
+                div({class:'text-bold d-flex align-items-center gap-x-2'},span({class:'color-badge'}).css({
+                    
+                }),'habit name'),
+                div({class:'d-flex w-25'},
+                    input({class:'form-control      habit-check',type:'number'})
+                )
+            )
+    )
 
 
 
+)
+
+*/
