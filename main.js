@@ -666,7 +666,7 @@ import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaContr
 let eventTransactions=state([])
 
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories[0].split(' ')[0],e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
+    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories.map((v)=>v.split(' ')[0]).join(''),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
     button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1!=e.info && t.amount!=e.amount)
         selectedEvent.transactions=eventTransactions.value
