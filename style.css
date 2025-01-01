@@ -10,12 +10,15 @@
     --bs-body-bg-rgb: 33,37,41;
 }
 
-.habit-check.{
-    
+
+
+
+.scary-ghost-input{
+    background-color: transparent;
+    border:none;
+    outline: none;
+    font-size: 0.99rem;
 }
-
-
-
 
 .table td{
  padding: 1rem;

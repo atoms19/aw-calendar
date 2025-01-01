@@ -1,6 +1,6 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement} from "dominity"
 import swipeDetector from "./swipe"
-import { formatMoney, removeFormatting } from "./utils"
+import { formatDate, formatMoney, removeFormatting } from "./utils"
 
 
 localforage.config({
@@ -47,6 +47,7 @@ let selected=0
 getEvents()
 
 let istaskMode=state(false)
+let dateCheck={}
 function loadCurrentMonth(year,month){
 
     calendarBody.html('')
@@ -74,6 +75,7 @@ let currentDay=0
     let firstDayOfNextMonth=realNextMonth.getDate()
     var selected=0
     let currWeekContainer
+    
     for(let i=0;i<35;i++){
         
         if((i)%7==0 || i==0){
@@ -103,6 +105,8 @@ let currentDay=0
          updateEventList()
         })
 
+       
+
         if(i>=startat && i<lastday+startat){
             let thisDate=new Date(year,month,1)
             thisDate.setDate(i-startat+1)
@@ -112,28 +116,54 @@ let currentDay=0
             dateElem.child(0).html(i-startat+1)
 
            let  monthlyEvents=events.value.filter((e)=>e.date==`${i-startat+1}-${month+1}-${year}`)
-            monthlyEvents.forEach(event=>{
-                   
 
-                    if(event.date==`${i-startat+1}-${month+1}-${year}`){
+            monthlyEvents.forEach(event=>{
+
                         dateElem.child(0)
                         span(
                             {class:'badge text-bg-'+event.type},
                             event.name
                         ).addTo(dateElem.child(0))
 
-                    }
-                
+                        if(event.endDate){
+
+                            dateElem.attr({class:'bg-'+event.type+' text-white'})
+                            let [startDay,startMonth,startYear]=event.date.split('-')
+                            let [endDay,endMonth,endYear]=event.endDate.split('-')
+                            dateCheck.start=new Date(startYear,startMonth-1,startDay)
+                            dateCheck.end=new Date(endYear,endMonth-1,endDay)
+                            dateCheck.color=event.type
+                            dateCheck.event=event
+                        }
+
             })
+
+                if (thisDate>dateCheck.start && thisDate<dateCheck.end){
+                    console.log('in range',thisDate)
+                    dateElem.attr({class:'bg-'+dateCheck.color+'-subtle'})
+                }
+                
+                if(thisDate>=dateCheck.end && thisDate <=dateCheck.end){
+                    console.log('end of range',thisDate)
+                    dateElem.attr({class:'bg-'+dateCheck.event.type+' text-white'})
+                }
+                
+            
+
+
             
             
             
             if(i-startat+1==currentDay){
                // dateElem.elem.classList.add('border','border-primary','bg-primary','text-white')
                dateElem.css({
-                background:'var(--bs-primary-bg-subtle)'
+                background:'var(--bs-primary-bg-subtle)',
+                border:'2px solid var(--bs-primary)', 
+                fontWeight:'bold',
                })
             }
+
+
         }else if(i<startat){
             dateElem.child(0).html(lastdayOfPreviousMonth-(startat-(i+1)))
             dateElem.child(0).elem.classList.add('text-body-secondary')
@@ -183,6 +213,15 @@ setTimeout(()=>{
 
 
 }
+
+
+$el('#endDateInp').on('change',()=>{
+    selectedEvent.endDate=$el('#endDateInp').elem.value
+    
+    localforage.setItem('events',events.value)
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+})
 
 
 let upBtn=$el("#calendar-up").on('click',monthUp)
@@ -330,11 +369,12 @@ function updateEventList(){
 let timeInp=$el('#time-input')
 let noteTextarea=$el('#note-text')
 
+$el('#event-date').on('click',()=>timeInp.elem.click())
+
+
 
 timeInp.on('change',()=>{
     if(selectedEvent){
-        selectedEvent.time=timeInp.value
-        localforage.setItem('events',events.value)
         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
     }
 })
@@ -352,6 +392,7 @@ function openEvent(te){
     })
     $el('#event-title').html(te.name)
     $el('#event-date').html(te.date)
+    $el('#endDateInp').elem.value=te.endDate ||''
 
     console.log('event has been opened ')
     selectedEvent=te
@@ -999,7 +1040,7 @@ $el('#duplicate-btn').on('click',()=>{
         name:selectedEvent.name,
         id:'d'+Date.now()+Math.floor(Math.random()*100),
         from:selectedEvent.id,
-        isTask:false,
+        isTask:selectedEvent.isTask,
         subtasks:[...selectedEvent.subtasks],
         note:selectedEvent.note,
         date:selectedEvent.date,

@@ -17,3 +17,12 @@ export const removeFormatting = (formattedValue) => {
     const plainValue = formattedValue.replace(/,/g, "");
     return parseFloat(plainValue);
   }
+
+ export function formatDate(dateString) {
+    const date = new Date(dateString);
+  
+    // Use toLocaleDateString with 'en-GB' and replace slashes with dashes
+    const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '-');
+  
+    return formattedDate;
+  }
