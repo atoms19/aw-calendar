@@ -149,7 +149,7 @@ let currentDay=0
                 if(thisDate>=dateCheck.end && thisDate <=dateCheck.end){
                     console.log('end of range',thisDate)
                     dateElem.attr({class:'bg-'+dateCheck.event.type+' text-white'}).css({
-                        border:'3px solid var(--bs-'+event.type+'-border-subtle)',
+                        border:'3px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
                         
                     })
                 }
