@@ -127,7 +127,10 @@ let currentDay=0
 
                         if(event.endDate){
 
-                            dateElem.attr({class:'bg-'+event.type+' text-white'})
+                            dateElem.attr({class:'bg-'+event.type+' text-white'}).css({
+                                border:'3px solid var(--bs-'+event.type+'-border-subtle)',
+                                
+                            })
                             let [startDay,startMonth,startYear]=event.date.split('-')
                             let [endDay,endMonth,endYear]=event.endDate.split('-')
                             dateCheck.start=new Date(startYear,startMonth-1,startDay)
@@ -145,7 +148,10 @@ let currentDay=0
                 
                 if(thisDate>=dateCheck.end && thisDate <=dateCheck.end){
                     console.log('end of range',thisDate)
-                    dateElem.attr({class:'bg-'+dateCheck.event.type+' text-white'})
+                    dateElem.attr({class:'bg-'+dateCheck.event.type+' text-white'}).css({
+                        border:'3px solid var(--bs-'+event.type+'-border-subtle)',
+                        
+                    })
                 }
                 
             
@@ -313,7 +319,17 @@ function selectDate(date,elem){
 
 function updateEventList(){
 
-    let targetEvents=events.value.filter(e=>e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`)
+    let targetEvents=events.value.filter(e=>{
+        if(e.date && e.endDate){
+            let [startDay,startMonth,startYear]=e.date.split('-')
+            let [endDay,endMonth,endYear]=e.endDate.split('-')
+            let start=new Date(startYear,startMonth-1,startDay)
+            let end=new Date(endYear,endMonth-1,endDay)
+            return d>=start && d<=end
+        }
+        return e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`
+    })
+    
     eventDisplay.html('')
 
     if(typeof targetEvents ==typeof []){
