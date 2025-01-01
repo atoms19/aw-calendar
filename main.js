@@ -992,15 +992,20 @@ $$el('.dropdown-toggle').forEach(ele=>{
             document.removeEventListener('click',dom)
         })
     })
-})
+}) 
 
 $el('#duplicate-btn').on('click',()=>{
     let dupeEvent={
         name:selectedEvent.name,
-        id:'d'+Date.now(),
+        id:'d'+Date.now()+Math.floor(Math.random()*100),
         from:selectedEvent.id,
-        ...selectedEvent
+        isTask:false,
+        subtasks:[...selectedEvent.subtasks],
+        note:selectedEvent.note,
+        date:selectedEvent.date,
+        type:selectedEvent.type
     }
+    console.log(dupeEvent)
     events.value=[...events.value,dupeEvent]
     
     localforage.setItem('events',events.value)
