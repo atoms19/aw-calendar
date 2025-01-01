@@ -152,6 +152,11 @@ let currentDay=0
                         border:'3px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
                         
                     })
+                    span(
+                        {class:'badge text-bg-'+dateCheck.event.type},
+                        dateCheck.event.name
+                    ).addTo(dateElem.child(0))
+                    
                 }
                 
             
