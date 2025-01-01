@@ -103,25 +103,49 @@
 
 
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas-event-config" aria-labelledby="offcanvasLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="event-open-">Event details</h5>
+      <div class="offcanvas-header d-flex align-items-center justify-content-between">
+        <div class="d-flex ">
+          <div class="d-flex flex-column">
+            <h4 class="offcanvas-title" id="event-title">Event details</h4>
+            <span class="offcanvas-subtitle text-secondary-emphasis" id="event-date"></span>
+            </div>
+            <div class="btn-group">
+              <button class="btn dropdown-toggle" for="drop">
+                <i class="bi bi-list"></i>
+              </button>
+              <ul class="dropdown-menu" id="drop">
+                <li><a class="dropdown-item" href="#" id="duplicate-btn">Duplicate event</a></li>
+                <li><a class="dropdown-item" href="#">Mark SuperSet</a></li>
+                <li><a class="dropdown-item" href="#">Lock event</a></li>
+                <li><h6 class="dropdown-header">Priority</h6></li>
+                <li>
+              
+            
+             
+                <form id="event-config-form"  class="">
+                  <select class="form-select" style="border-radius: 0px !important;border:none !important;" id="color-input">
+                    <option class="bg-danger-subtle text-danger-emphasis" value="danger">P0 critical </option>
+                    <option class="bg-warning-subtle text-warning-emphasis" value="warning">P1 important</option>
+                    <option class="bg-primary-subtle text-primary-emphasis" value="primary">p2 regular</option>
+                    <option class="bg-success-subtle text-success-emphasis" value="success">P3 safe</option>
+                    <option class="bg-secondary-subtle text-secondary-emphasis" value="secondary">P4 unimportant</option>
+                  </select>
+                </form>
+               
+                </li>
+              </ul>
+             </div>
+          </div>
+          
+        <div>
+
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" id="close-event" aria-label="Close"></button>
-      </div>
+       
+        </div>
+      </div> 
       <div class="offcanvas-body">
 
-        <label class="form-label">priority</label>
-       
-        <form id="event-config-form">
-          <select class="form-select" id="color-input">
-            <option class="bg-primary-subtle text-primary-emphasis">primary</option>
-            <option class="bg-secondary-subtle text-secondary-emphasis">secondary</option>
-            <option class="bg-warning-subtle text-warning-emphasis">warning</option>
-            <option class="bg-success-subtle text-success-emphasis">success</option>
-            <option class="bg-danger-subtle text-danger-emphasis">danger</option>
-         
-            
-          </select>
-        </form>
+        
           
           <label class="form-label d-none mt-4">time</label>
          <input class="form-control d-none" id="time-input" type="time"> 

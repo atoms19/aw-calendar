@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement} from "dominity"
 import swipeDetector from "./swipe"
 import { formatMoney, removeFormatting } from "./utils"
 
@@ -350,6 +350,9 @@ function openEvent(te){
         if($el('#'+el.attr('for')).elem.checked) el.elem.click()  //automatically close all edit options when opening a new event 
         
     })
+    $el('#event-title').html(te.name)
+    $el('#event-date').html(te.date)
+
     console.log('event has been opened ')
     selectedEvent=te
     noteDisplay.html('')
@@ -974,6 +977,38 @@ function calculateMonthlySum(month,listed='expense'){
     return sum   
 }
 // habbit tracker -----------------------------------------------------------------------
+
+
+$$el('.dropdown-toggle').forEach(ele=>{
+    let isOpen=state(false)
+    ele.elem.parentNode.addEventListener('click',(e)=>{
+        e.stopPropagation()
+    })
+    $el('#'+ele.attr('for')).bindClass(isOpen,'show')
+    ele.on('click',()=>{
+        isOpen.value=true 
+        let dom=document.addEventListener('click',()=>{
+            isOpen.value=false
+            document.removeEventListener('click',dom)
+        })
+    })
+})
+
+$el('#duplicate-btn').on('click',()=>{
+    let dupeEvent={
+        name:selectedEvent.name,
+        id:'d'+Date.now(),
+        from:selectedEvent.id,
+        ...selectedEvent
+    }
+    events.value=[...events.value,dupeEvent]
+    
+    localforage.setItem('events',events.value)
+
+    updateEventList()
+    
+    alert('duplicated successfully')
+})
 
 let habits =state([])
 
