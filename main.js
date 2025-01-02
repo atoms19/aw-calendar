@@ -438,6 +438,9 @@ function openEvent(te){
         viewMap.setView([te.location.lat,te.location.long],13)
         marker.setLatLng([te.location.lat,te.location.long]).bindPopup(te.location.name).openPopup()
         $el('#map').elem.classList.remove('d-none')
+    }else{
+        $el('#map').elem.classList.add('d-none')
+
     }
 
     console.log('event has been opened ')
@@ -1189,3 +1192,21 @@ function loadMap(lat,long){
       });
     
       
+$el('#location-add').on('click',async ()=>{
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent($el('#location-inp').elem.value)}`;
+    
+      const response = await fetch(url);
+      const results = await response.json();
+      if (results.length === 0) {
+        alert('Location not found!');
+        return;
+      }
+      const { lat, lon, display_name } = results[0];
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lon);
+
+      // Update the map view
+      pickerMap.setView([latitude, longitude], 13);
+
+
+})
