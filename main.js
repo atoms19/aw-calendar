@@ -1,7 +1,19 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement} from "dominity"
 import swipeDetector from "./swipe"
 import { formatDate, formatMoney, removeFormatting } from "./utils"
+import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
+import { marked } from "marked"
+import markedKatex from "marked-katex-extension"
+import markedFootnote from "marked-footnote"
+import markedAlert from "marked-alert"
 
+
+marked.use(markedKatex({throwOnError:false}),markedFootnote(),markedAlert({
+    className:'',
+    variants:[] 
+}))
+
+  
 
 localforage.config({
     name: 'calendar',
@@ -152,10 +164,7 @@ let currentDay=0
                         border:'3px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
                         
                     })
-                    span(
-                        {class:'badge text-bg-'+dateCheck.event.type},
-                        dateCheck.event.name
-                    ).addTo(dateElem.child(0))
+                   
                     
                 }
                 
@@ -234,6 +243,13 @@ $el('#endDateInp').on('change',()=>{
 
 })
 
+$el('#startDateInp').on('change',()=>{
+    selectedEvent.date=$el('#startDateInp').elem.value
+    
+    localforage.setItem('events',events.value)
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+})
 
 let upBtn=$el("#calendar-up").on('click',monthUp)
 let downBtn=$el("#calendar-down").on('click',monthDown)
@@ -390,7 +406,6 @@ function updateEventList(){
 let timeInp=$el('#time-input')
 let noteTextarea=$el('#note-text')
 
-$el('#event-date').on('click',()=>timeInp.elem.click())
 
 
 
@@ -412,7 +427,7 @@ function openEvent(te){
         
     })
     $el('#event-title').html(te.name)
-    $el('#event-date').html(te.date)
+    $el('#startDateInp').elem.value=te.date
     $el('#endDateInp').elem.value=te.endDate ||''
 
     console.log('event has been opened ')
@@ -428,8 +443,8 @@ function openEvent(te){
     }else{
         eventTransactions.value=[]
     }
-    noteDisplay.html(marked.parse(te.note||''))
-    renderMathInElement(noteDisplay.elem)
+    noteDisplay.html(marked.parse(te.note||'').replaceAll('<table','<table class="table my-4 table-striped"'))
+    //renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
   updateTaskList()
  
@@ -446,9 +461,10 @@ noteTextarea.model(note)
 noteTextarea.on("input",()=>{
     selectedEvent.note=note.value
     localforage.setItem('events',events.value)
-    noteDisplay.html(marked.parse(note.value))
-    renderMathInElement(noteDisplay.elem)
+    noteDisplay.html(marked.parse(note.value).replaceAll('<table','<table class="table my-4 table-striped"'))
+   // renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
+    
 
 })
 
@@ -726,7 +742,7 @@ $el('#myday-btn').on('click',()=>{
 
 //----------------------------------expense tracker ---------------------------------------------------
 
-import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
+
 
 let eventTransactions=state([])
 

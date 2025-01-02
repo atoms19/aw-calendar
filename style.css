@@ -95,13 +95,26 @@
         width:40vw;
     }
 }
-
+[data-footnote-ref]::before {
+    content: '[';
+  }
+  
+  [data-footnote-ref]::after {
+    content: ']';
+  }
 
 #note-display img{
     width: 100%;
     height: auto;
 }
-
+#note-display code{
+    border-radius:var(--bs-border-radius-sm);
+}
+#note-display blockquote{
+    border-left: 0.25rem solid var(--bs-secondary);
+    padding: 0.5rem;
+    margin: 0;
+}
 /* #note-display pre::after{
     content: 'run code';
     padding: 0.5rem;
