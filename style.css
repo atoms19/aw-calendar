@@ -103,6 +103,10 @@
     content: ']';
   }
 
+  .map { height: 180px; 
+    border-radius: var(--bs-border-radius-sm);
+}
+
 #note-display img{
     width: 100%;
     height: auto;

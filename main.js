@@ -22,6 +22,10 @@ localforage.config({
     
 })
 
+
+
+
+
 let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
@@ -418,7 +422,7 @@ timeInp.on('change',()=>{
 export let selectedEvent;
 
 
-
+let [viewMap,marker]=loadMap(0,0)
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
 
@@ -429,6 +433,12 @@ function openEvent(te){
     $el('#event-title').html(te.name)
     $el('#startDateInp').elem.value=te.date
     $el('#endDateInp').elem.value=te.endDate ||''
+
+    if(te.location!=undefined){
+        viewMap.setView([te.location.lat,te.location.long],13)
+        marker.setLatLng([te.location.lat,te.location.long]).bindPopup(te.location.name).openPopup()
+        $el('#map').elem.classList.remove('d-none')
+    }
 
     console.log('event has been opened ')
     selectedEvent=te
@@ -763,6 +773,9 @@ $el('#exp-btn').on('click',()=>{
     $el('#exp-edit').elem.classList.toggle('d-none')
 })
 
+$el('#loc-btn').on('click',()=>{
+    $el('#loc-edit').elem.classList.toggle('d-none')
+})
 
 let amount=state(null)
 let info=state(null)
@@ -1121,3 +1134,58 @@ let habits =state([])
 )
 
 */
+
+// maps --------------------------------
+
+function loadMap(lat,long){
+
+    let map = L.map('map').setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    let marker=L.marker([lat,long]).addTo(map).bindPopup('You are here!').openPopup()
+
+
+    return [map,marker]
+    
+    }
+    
+    let pickerMap=L.map('pickermap').setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(pickerMap);
+    let pickerMarker;
+      // Get current location and set view
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            pickerMap.setView([latitude, longitude], 13); // Center map at current location
+             pickerMarker=L.marker([latitude, longitude]).addTo(pickerMap).bindPopup('You are here!').openPopup();
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+          }
+        );
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    
+      pickerMap.on('click', (e) => {
+        const { lat, lng } = e.latlng;
+        if(selectedEvent.location==undefined){
+            selectedEvent.location={
+                name:$el('#location-inp').elem.value,
+            }
+        }
+        selectedEvent.location.name=$el('#location-inp').elem.value
+        selectedEvent.location.lat=lat 
+        selectedEvent.location.long=lng 
+        localforage.setItem('events',events.value)
+        pickerMarker.setLatLng([lat, lng]).bindPopup(`Marker moved to: ${lat.toFixed(5)}, ${lng.toFixed(5)}`).openPopup();
+      });
+    
+      

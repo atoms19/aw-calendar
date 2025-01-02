@@ -9,10 +9,14 @@
     https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/litera/bootstrap.min.css
     " rel="stylesheet">
 
-    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="./style.css" rel="stylesheet"/>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 <link rel="favicon" href="'icons/iosicon.png"/>
     <link rel="manifest" href="manifest.json">
 
@@ -199,6 +203,23 @@
 
           <div class="list-group" id="transaction-list">
 
+          </div>
+
+          <div id="map" class="map d-none"></div>
+          <div id="loc-edit" class="d-none">
+            <div class="input-group">
+              <input class="form-control form-control-md" id="location-inp" placeholder="enter location name" type="text">
+              <button class="btn btn-primary btn-md" id="location-add"><i class="bi bi-pin"></i></button>
+            </div>
+            <div class="input-group mt-2">
+              <input class="form-control form-control-md" id="location-coords" placeholder="enter latitude" type="text">
+              <input class="form-control form-control-md" id="location-coords" placeholder="enter longitude" type="text">
+            </div>
+
+            <p>or pick from map</p>
+            <div id="pickermap" class="map">
+
+            </div>
           </div>
 
           <div class="d-none mt-3" id="exp-edit">
