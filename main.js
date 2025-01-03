@@ -758,12 +758,14 @@ $el('#dark-theme-btn',' :',isDarkMode).on('click',()=>{
 
 })
 
-let themeName=state('')
+let themeName=state(localStorage.getItem('custom-themeName')||'litera')
 let themes=['litera','vapor','sandstone','lux','quartz','minty','sketchy','yeti','solar','zephyr','slate','simplex','morph','journal','cerulean','cosmo','cyborg','flatly','lumen','darkly','pulse','superhero','materia']
-let itheme=themes.indexOf(localStorage.getItem('custom-themeName')||'litera')
-$el('#theme-btn',themeName).on('click',()=>{
+let itheme=themes.indexOf(themeName.value)
+
+$el('#theme-btn',' :',themeName).on('click',()=>{
     localStorage.setItem('custom-themeName',themes[itheme%themes.length])
-    themeName.value=' :'+themes[itheme%themes.length]
+    themeName.value=themes[itheme%themes.length]
+    $el('#theme-shifter').attr('href','https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/'+themeName.value+'/bootstrap.min.css')
     itheme+=1
 })
 

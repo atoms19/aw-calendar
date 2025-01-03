@@ -30,6 +30,7 @@
       let themename=localStorage.getItem('custom-themeName') || 'litera'  
       let l=document.createElement('link')
       l.rel='stylesheet'
+      l.id='theme-shifter'
       l.href='https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/'+themename+'/bootstrap.min.css'
       document.head.appendChild(l)
 
@@ -46,7 +47,7 @@
               <button class="btn btn-primary dropdowntoggle round-btn my-3" id="myday-btn" for="settings" ><i class="bi bi-gear"></i></button>
                 <ul id="settings" class="dropdown-menu dropdown-start">
                   <li><a class="dropdown-item" href="#"  id="dark-theme-btn">theme</a></li>
-                  <li><a class="dropdown-item" href="#"  id="theme-btn">color theme</a></li>
+                  <li><a class="dropdown-item" href="#"  id="theme-btn">flavor</a></li>
 
 
                 </ul>
