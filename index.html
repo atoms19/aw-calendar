@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>aw-calendar</title>
 
-    <link href="
-    https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/litera/bootstrap.min.css
-    " rel="stylesheet">
+   
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="./style.css" rel="stylesheet"/>
+    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
@@ -26,13 +24,33 @@
 
    </head>
 <body data-bs-theme="light">
+
+
+  <script>
+      let themename=localStorage.getItem('custom-themeName') || 'litera'  
+      let l=document.createElement('link')
+      l.rel='stylesheet'
+      l.href='https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/'+themename+'/bootstrap.min.css'
+      document.head.appendChild(l)
+
+      document.head.innerHTML+='<link href="./style.css" rel="stylesheet"/>'  
+  </script>
+
  <div class="container " id="calendar-section">
   
       <div class="row">
           <div id="calendar-main" class="col-lg-9">
           <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
             <h3 id="year-display" class="py-2 pb-0"></h3>
-            <button class="btn btn-primary round-btn my-3" id="myday-btn"><i class="bi bi-gear"></i></button>
+            <div class="btn-group">
+              <button class="btn btn-primary dropdowntoggle round-btn my-3" id="myday-btn" for="settings" ><i class="bi bi-gear"></i></button>
+                <ul id="settings" class="dropdown-menu dropdown-start">
+                  <li><a class="dropdown-item" href="#"  id="dark-theme-btn">theme</a></li>
+                  <li><a class="dropdown-item" href="#"  id="theme-btn">color theme</a></li>
+
+
+                </ul>
+            </div>
             </div>
             <div class="py-5 pt-0 d-flex w-100 justify-content-between align-items-center"> 
             <h1 id="month-display"></h1>
@@ -115,7 +133,7 @@
             <span><input type="isodate" class="scary-ghost-input text-secondary-emphasis" placeholder="endDate" id="endDateInp" ></span>
             </div>
             <div class="btn-group">
-              <button class="btn dropdown-toggle" for="drop">
+              <button class="btn dropdown-toggle dropdowntoggle" for="drop">
                 <i class="bi bi-list"></i>
               </button>
               <ul class="dropdown-menu" id="drop">
@@ -173,7 +191,7 @@
           </div>
  </div>
 
- <div id="map" class="map d-none"></div>
+ <div id="map" class="map d-none mb-3"></div>
 <div id="note-display">
 
 
@@ -213,15 +231,14 @@
               <input class="form-control form-control-md" id="location-inp" placeholder="enter location name" type="text">
               <button class="btn btn-primary btn-md" id="location-add"><i class="bi bi-pin"></i></button>
             </div>
-            <div class="input-group mt-2">
-              <input class="form-control form-control-md" id="location-coords" placeholder="enter latitude" type="text">
-              <input class="form-control form-control-md" id="location-coords" placeholder="enter longitude" type="text">
+            <div class="input-group mt-2 d-none" >
+              <input class="form-control form-control-md" id="location-lat" placeholder="enter latitude" type="text">
+              <input class="form-control form-control-md" id="location-long" placeholder="enter longitude" type="text">
             </div>
-
-            <p>or pick from map</p>
-            <div id="pickermap" class="map">
+            <div id="pickermap" class="map border-primary">
 
             </div>
+            <a id="remove-pin" href="#">remove pin</a>
           </div>
 
           <div class="d-none mt-3" id="exp-edit">

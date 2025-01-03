@@ -106,7 +106,9 @@
   .map { height: 180px; 
     border-radius: var(--bs-border-radius-sm);
 }
-
+.dropdown-start{
+    margin-left: -6rem;
+}
 #note-display img{
     width: 100%;
     height: auto;

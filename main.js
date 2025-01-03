@@ -30,6 +30,10 @@ let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
+let currency=state(' $')
+let chime=state(false)
+
+
 let destroyer,destroyer2
 monthDisplay.on('click',async()=>{
     $el('#calendar-section').elem.classList.add('d-none')
@@ -37,7 +41,7 @@ monthDisplay.on('click',async()=>{
     destroyer=await renderChart('pie-canvas')
     destroyer2=await renderChart('pie-canvas-income','income')
 
-    $el('#total-gross',{class:'mt-5'}).html('total gross : '+formatMoney(-calculateMonthlySum(currentDate.getMonth(),'expense')+calculateMonthlySum(currentDate.getMonth(),'income'))+'💵')
+    $el('#total-gross',{class:'mt-5'}).html('total gross : '+formatMoney(-calculateMonthlySum(currentDate.getMonth(),'expense')+calculateMonthlySum(currentDate.getMonth(),'income'))+currency.value)
 
     
 
@@ -367,7 +371,7 @@ function updateEventList(){
                         te.subtasks.forEach(task=>{
                             task.done=eventChecked.value
                         })
-                        if(eventChecked.value){
+                        if(eventChecked.value && chime.value==true){
                             sound.play()
                         }
 
@@ -635,7 +639,7 @@ d.addTo(tasklist)
  let tas=div({class:'d-flex justify-content-between rounded-2 mb-1 shadow-sm py-2 px-3','draggable':'true'},
     div({class:'form-check'},
         input({class:'form-check-input',type:'checkbox'}).model(done).on("change",()=>{
-            if(done.value){
+            if(done.value && chime.value==true){
                 sound.play()
             }
             updateEventList()
@@ -747,10 +751,20 @@ $el("#event-chooser").on("click",()=>{
 
 let s=['light','dark','auto']
 let ic=0
-$el('#myday-btn').on('click',()=>{
+$el('#dark-theme-btn',' :',isDarkMode).on('click',()=>{
     isDarkMode.value=s[ic%s.length]
+    
     ic+=1
 
+})
+
+let themeName=state('')
+let themes=['litera','vapor','sandstone','lux','quartz','minty','sketchy','yeti','solar','zephyr','slate','simplex','morph','journal','cerulean','cosmo','cyborg','flatly','lumen','darkly','pulse','superhero','materia']
+let itheme=themes.indexOf(localStorage.getItem('custom-themeName')||'litera')
+$el('#theme-btn',themeName).on('click',()=>{
+    localStorage.setItem('custom-themeName',themes[itheme%themes.length])
+    themeName.value=' :'+themes[itheme%themes.length]
+    itheme+=1
 })
 
 //----------------------------------expense tracker ---------------------------------------------------
@@ -760,7 +774,9 @@ $el('#myday-btn').on('click',()=>{
 let eventTransactions=state([])
 
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item justify-content-between d-flex'},div(e.categories.map((v)=>v.split(' ')[0]).join(''),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+'💵',
+    return li({class:'list-group-item justify-content-between d-flex'},div(span(e.categories.map((v)=>v.split(' ')[0]).join(' ')).css({
+        fontWeight:600,
+    }),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+currency.value,
     button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1!=e.info && t.amount!=e.amount)
         selectedEvent.transactions=eventTransactions.value
@@ -951,7 +967,7 @@ const data = {
     let categoryDisplay=derived(()=>categories.value.filter(c=>c.type==listed))
 
     $el(`#cat-list-${listed}-editor`).forEvery(categoryDisplay,(c,index)=>{
-        return li({class:'list-group-item d-flex justify-content-between align-items-center',},c.name||c,span(span(`💵 ${formatMoney(geneventData[index])}`),
+        return li({class:'list-group-item d-flex justify-content-between align-items-center',},c.name||c,span(span(`${formatMoney(geneventData[index])}${currency.value}`),
         
         button({class:'btn btn-sm ml-5'},i({class:'bi bi-trash'})).on('click',(e)=>{
             e.stopPropagation()
@@ -966,7 +982,7 @@ const data = {
 
                     e.transactions.forEach(t=>{
                         if(t.categories.includes(c.name||c)){
-                            li({class:'list-group-item justify-content-between d-flex'},div(t.info),div({class:'ms-auto '+(t.type=='income' ? 'text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+'💵',
+                            li({class:'list-group-item justify-content-between d-flex'},div(t.info),div({class:'ms-auto '+(t.type=='income' ? 'text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+currency.value,
                             button( {class:'btn btn-sm'},e.date,'  from ',e.name).on('click',(s)=>{
                                 s.stopPropagation()
                                 selectedEvent=e
@@ -982,8 +998,8 @@ const data = {
         })
     })
 
-  $el('#tally-'+listed,'visible sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(totalSum.value),'💵'))
-$el('#actual-'+listed,'total sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(calculateMonthlySum(currentDate.getMonth(),listed)),'💵'))
+  $el('#tally-'+listed,'visible sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(totalSum.value),currency.value))
+$el('#actual-'+listed,'total sum: ',span({class:listed=='expense'?'text-danger':'text-primary'},listed=='expense'?'-':'+',()=>formatMoney(calculateMonthlySum(currentDate.getMonth(),listed)),currency.value))
 
     return ()=>{
         $el('#tally-'+listed).html('')
@@ -1073,7 +1089,7 @@ function calculateMonthlySum(month,listed='expense'){
 // habbit tracker -----------------------------------------------------------------------
 
 
-$$el('.dropdown-toggle').forEach(ele=>{
+$$el('.dropdowntoggle').forEach(ele=>{
     let isOpen=state(false)
     ele.elem.parentNode.addEventListener('click',(e)=>{
         e.stopPropagation()
@@ -1094,7 +1110,12 @@ $el('#duplicate-btn').on('click',()=>{
         id:'d'+Date.now()+Math.floor(Math.random()*100),
         from:selectedEvent.id,
         isTask:selectedEvent.isTask,
-        subtasks:[...selectedEvent.subtasks],
+        subtasks:selectedEvent.subtasks.map(e=>{
+            return {
+                name:e.name,
+                done:false, 
+            }
+        }),
         note:selectedEvent.note,
         date:selectedEvent.date,
         type:selectedEvent.type
@@ -1162,6 +1183,7 @@ function loadMap(lat,long){
     }).addTo(pickerMap);
     let pickerMarker;
       // Get current location and set view
+    function pickerMapLocationSet(){
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -1178,6 +1200,7 @@ function loadMap(lat,long){
         pickerMap.setView([40.7128,74.0060 ], 13); // Center map at current location
         pickerMarker=L.marker([latitude, longitude]).addTo(pickerMap).bindPopup('').openPopup();
       }
+    }
     
       pickerMap.on('click', (e) => {
         const { lat, lng } = e.latlng;
@@ -1212,3 +1235,11 @@ $el('#location-add').on('click',async ()=>{
 
 
 })
+
+$el('#remove-pin').on('click',()=>{
+    selectedEvent.location=undefined
+    localforage.setItem('events',events.value)
+    openEvent(selectedEvent)
+   // pickerMapLocationSet()
+})
+pickerMapLocationSet()
