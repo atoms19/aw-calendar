@@ -144,7 +144,7 @@ let currentDay=0
                         if(event.endDate){
 
                             dateElem.attr({class:'bg-'+event.type+' text-white'}).css({
-                                border:'3px solid var(--bs-'+event.type+'-border-subtle)',
+                                border:'1px solid var(--bs-'+event.type+'-border-subtle)',
                                 
                             })
                             let [startDay,startMonth,startYear]=event.date.split('-')
@@ -158,14 +158,14 @@ let currentDay=0
             })
 
                 if (thisDate>dateCheck.start && thisDate<dateCheck.end){
-                    console.log('in range',thisDate)
+                    
                     dateElem.attr({class:'bg-'+dateCheck.color+'-subtle'})
                 }
                 
                 if(thisDate>=dateCheck.end && thisDate <=dateCheck.end){
                     console.log('end of range',thisDate)
                     dateElem.attr({class:'bg-'+dateCheck.event.type+' text-white'}).css({
-                        border:'3px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
+                        border:'1px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
                         
                     })
                    
@@ -1174,7 +1174,9 @@ function loadMap(lat,long){
           }
         );
       } else {
-        console.error('Geolocation is not supported by this browser.');
+        alert('this app uses location for the maps feature in the events , it doesnt store or sell your data consider enabling perms for a smooth experience ')
+        pickerMap.setView([40.7128,74.0060 ], 13); // Center map at current location
+        pickerMarker=L.marker([latitude, longitude]).addTo(pickerMap).bindPopup('').openPopup();
       }
     
       pickerMap.on('click', (e) => {
