@@ -739,10 +739,10 @@ effect(()=>{
 
 $el("#event-chooser").on("click",()=>{
     if(!istaskMode.value){
-        $el("#event-chooser").html("task-events")
+        $el("#event-chooser").html("Tasks")
         istaskMode.value=true
     }else{
-        $el("#event-chooser").html("events")
+        $el("#event-chooser").html("Events")
         istaskMode.value=false
     }
 })
