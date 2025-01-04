@@ -138,7 +138,7 @@ let currentDay=0
            let  monthlyEvents=events.value.filter((e)=>e.date==`${i-startat+1}-${month+1}-${year}`)
 
             monthlyEvents.forEach(event=>{
-
+                        
                         dateElem.child(0)
                         span(
                             {class:'badge text-bg-'+event.type+' color-auto'},
