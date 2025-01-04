@@ -159,11 +159,14 @@ background-color: #10111256;
         width: 0.5rem !important;
         height: 0.25rem !important;
         overflow: hidden !important;
+        font-size: 0.5rem !important;
+
         color: transparent !important;
 
     }
     .color-auto{
         color:transparent !important;
+        font-size: 0.5rem !important;
         
     }
 }
