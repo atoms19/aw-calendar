@@ -79,27 +79,10 @@
 }
 .color-auto{
     color:white;
+
 }
 
-@media (max-width: 576px) {
-    .border-left-only{
-        border-left: none;
-    }
-    .badge{
-        padding-right: 0.0rem !important;
-        padding-left: 0.0rem !important;
-        padding-top: 0.1rem !important;
-        padding-bottom: 0.1rem !important;
-        width: 0.5rem !important;
-        height: 0.25rem !important;
-        overflow: hidden !important;
-        color: transparent !important;
 
-    }
-    .color-auto{
-        color:transparent !important;
-    }
-}
 
 @media (min-width: 576px) {
     .offcanvas.show{
@@ -164,3 +147,23 @@ padding-top: 1rem;
 background-color: #10111256;
 }
 
+@media (max-width: 576px) {
+    .border-left-only{
+        border-left: none;
+    }
+    .badge{
+        padding-right: 0.0rem !important;
+        padding-left: 0.0rem !important;
+        padding-top: 0.1rem !important;
+        padding-bottom: 0.1rem !important;
+        width: 0.5rem !important;
+        height: 0.25rem !important;
+        overflow: hidden !important;
+        color: transparent !important;
+
+    }
+    .color-auto{
+        color:transparent !important;
+        
+    }
+}
