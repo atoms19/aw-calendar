@@ -1250,3 +1250,10 @@ $el('#remove-pin').on('click',()=>{
    // pickerMapLocationSet()
 })
 pickerMapLocationSet()
+
+
+events.value=events.value.filter((e)=>{
+return e.endDate==undefined 
+
+})
+localforage.setItem('events',events.value)
