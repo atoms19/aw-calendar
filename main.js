@@ -141,7 +141,7 @@ let currentDay=0
 
                         dateElem.child(0)
                         span(
-                            {class:'badge text-bg-'+event.type},
+                            {class:'badge text-bg-'+event.type+' color-auto'},
                             event.name
                         ).addTo(dateElem.child(0))
 

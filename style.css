@@ -71,6 +71,9 @@
 .badge{
     min-width:0.12rem !important;
 }
+.color-auto{
+    color:white;
+}
 
 @media (max-width: 576px) {
     .border-left-only{
@@ -86,6 +89,9 @@
         overflow: hidden !important;
         color: transparent !important;
 
+    }
+    .color-auto{
+        color:transparent !important;
     }
 }
 
