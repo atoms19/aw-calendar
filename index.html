@@ -34,6 +34,15 @@
       l.href='https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/'+themename+'/bootstrap.min.css'
       document.head.appendChild(l)
 
+
+      setTimeout(()=>{
+          let l=document.createElement('link')
+          l.rel='stylesheet'
+          l.id='core-style'
+          l.href='./style.css'
+          document.head.appendChild(l)
+      },4000)
+
  </script>
 
  <div class="container " id="calendar-section">
