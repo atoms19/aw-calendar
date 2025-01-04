@@ -22,10 +22,10 @@
 }
 
 .table td{
- padding: 1rem;
- margin: 0;
- display: table-cell;
- text-align: center;
+ padding: 1rem !important;
+ margin: 0 !important;
+ display: table-cell !important;
+ text-align: center !important;
 }
 .border-left-only{
     border-left: 1px solid var(--bs-border-color);
