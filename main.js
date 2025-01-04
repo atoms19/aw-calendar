@@ -769,6 +769,11 @@ $el('#theme-btn',' :',themeName).on('click',()=>{
     itheme+=1
 })
 
+
+$el('#curr-inp').model(currency)
+
+
+
 //----------------------------------expense tracker ---------------------------------------------------
 
 

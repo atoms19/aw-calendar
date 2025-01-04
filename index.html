@@ -56,6 +56,8 @@
                 <ul id="settings" class="dropdown-menu dropdown-start">
                   <li><a class="dropdown-item" href="#"  id="dark-theme-btn">theme</a></li>
                   <li><a class="dropdown-item" href="#"  id="theme-btn">flavor</a></li>
+                  <li><a class="dropdown-item" href="#"  id="curr-inp">currency : <input type="text" style='width:1rem;' class="scary-ghost-input"></a></li>
+
 
 
                 </ul>
@@ -107,13 +109,13 @@
               <div class="col-lg-3 border-left-only">
                 <div class="mt-4 ">
                     <h4 id="selected-date" class="d-sm-none d-md-block"></h4>
-                    <h6 class="text-secondary mt-5" id="event-chooser">events</h6>
+                    <h6 class="text-secondary mt-5" id="event-chooser">Events</h6>
                     
                     <hr/>
                     <form class="form" id="event-form">
                         <div class="input-group">
                             <input disabled id="event-name" placeholder="enter the event name.." type="text" class="form-control form-control-md"/>
-                            <button id="add-event-btn" class="btn btn-primary btn-md">add event</button>
+                            <button id="add-event-btn" class="btn btn-primary btn-md">Add event</button>
                         </div>
                     </form>
                       
@@ -147,7 +149,8 @@
               </button>
               <ul class="dropdown-menu" id="drop">
                 <li><a class="dropdown-item" href="#" id="duplicate-btn">Duplicate event</a></li>
-                <li><a class="dropdown-item" href="#">Mark SuperSet</a></li>
+                <li><a class="dropdown-item" href="#">Repeat event</a></li>
+                <li><a class="dropdown-item" href="#">Track setup</a></li>
                 <li><a class="dropdown-item" href="#">Lock event</a></li>
                 <li><h6 class="dropdown-header">Priority</h6></li>
                 <li>
@@ -307,8 +310,8 @@
 <nav class="nav nav-pills flex-column flex-sm-row">
   <a class="flex-sm-fill active text-sm-center nav-link  tab-chooser" data-tab="expense" href="#">Expense Overview</a>
   <a class="flex-sm-fill text-sm-center nav-link tab-chooser" href="#" data-tab="income">Income Overview</a>
-  <a class="flex-sm-fill text-sm-center nav-link  tab-chooser" data-tab='gross' >Wallets and Gross Overview</a>
-  <a class="flex-sm-fill text-sm-center nav-link tab-chooser" href="#" data-tab="habits" >Habbit Overview</a>
+  <a class="flex-sm-fill text-sm-center nav-link  tab-chooser" data-tab='gross' >Gross Overview</a>
+  <a class="flex-sm-fill text-sm-center nav-link tab-chooser" href="#" data-tab="habits" >Tracker Overview</a>
 </nav>
 <section id="expense-page" class="tab-children" tab-name="expense">
 
@@ -354,7 +357,7 @@
 </section>
 <section class="tab-children" tab-name="habits">
 
-  <button class=" mt-3 btn btn-success d-flex justify-content-center align-items-center  btn-md" id="cat-add">add a habbit<i class="bi fs-5 bi-plus"></i></button>
+  <button class=" mt-3 btn btn-success d-flex justify-content-center align-items-center  btn-md" id="cat-add">Add Tracker<i class="bi fs-5 bi-plus"></i></button>
   
 
 </section>
@@ -374,7 +377,9 @@
    <h3 class="bg-secondary-subtle">expense summary</h3>
    
      <div class="w-100 d-flex md-flex-row flex-column md-justify-content-center align-items-center">
-     <canvas id="line-canvas" class="mt-3"></canvas>
+     
+      <canvas id="line-canvas" class="mt-3"></canvas>
+
    
        <div>
         
@@ -422,47 +427,12 @@
            <code class="bg-warning-subtle">🍔 food</code>
          </p>
          </div>
-         <div class="alert mt-3 alert-info d-none " role="alert">
-          <p class="mb-0">
-            <i class="bi bi-info-circle"></i>
-            <span>subcategories must be selected along with their parent category while adding new transactions , their amount will not be computed , only their parent categories will , but still can be viewed in piechart great for organising things</span>
-          </p>
-          </div>
+
           <div class="modal-footer">
               <button type="button" id="cat-adder" class="btn btn-primary">add category</button>
           </div>
        </div>
      </div>
-</div>
-</div>
-
-
-<div id="habitmodal" class="modal animate-up">
-  <div class="modal-dialog ">
-    <div class="modal-content"> 
-     <div class="modal-header"> 
-       <h5 class="modal-title">Enter New Habit</h5> 
-       <button type="button" class="btn btn-close modal-close" ></button> 
-     </div> 
-     <div class="modal-body"> 
-     
-         <div class="form-group"> 
-           <label for="categoryName">Habit Name</label> 
-           <input type="text" class="form-control" id="hab-nameInp" placeholder="Enter Habit name"> 
-         </div>
-         <div class="form-group mt-3">
-           <label for="hab-type">Habit Type</label>
-         <select id="hab-type" class="form-select">
-           <option selected value="yes or no">yes or no</option>
-           <option value="numerical">numerical</option>
-         </select>
-         </div>
-        
-         <div class="modal-footer">
-             <button type="button" id="cat-adder" class="btn btn-success">add Habit</button>
-         </div>
-      </div>
-    </div>
 </div>
 </div>
 
