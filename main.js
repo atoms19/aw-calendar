@@ -31,6 +31,7 @@ let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
 
 let currency=state(' $')
+currency.value=localStorage.getItem('currency-marker') || ' $'
 let chime=state(false)
 
 
@@ -110,8 +111,10 @@ let currentDay=0
         )
 
         dateElem.on("dragover",(e)=>{
+         if(i>=startat && i<lastday+startat){
             e.preventDefault()
             dateElem.elem.classList.add('bg-secondary')
+         }
         })
         dateElem.on('dragleave',()=>{  
             dateElem.elem.classList.remove('bg-secondary')
@@ -241,7 +244,10 @@ setTimeout(()=>{
 
 
 }
-
+$el('#event-title').on('input',()=>{
+    selectedEvent.name=$el('#event-title').elem.innerText
+    localforage.setItem('events',events.value)
+})
 
 $el('#endDateInp').on('change',()=>{
     selectedEvent.endDate=$el('#endDateInp').elem.value
@@ -434,7 +440,7 @@ function openEvent(te){
         if($el('#'+el.attr('for')).elem.checked) el.elem.click()  //automatically close all edit options when opening a new event 
         
     })
-    $el('#event-title').html(te.name)
+    $el('#event-title').elem.innerText=te.name
     $el('#startDateInp').elem.value=te.date
     $el('#endDateInp').elem.value=te.endDate ||''
 
@@ -770,7 +776,12 @@ $el('#theme-btn',' :',themeName).on('click',()=>{
 })
 
 
-$el('#curr-inp').model(currency)
+$el('#curr-inp').attr('value',currency.value).on('change',(e)=>{
+
+    currency.value=' '+e.target.value
+    localStorage.setItem('currency-marker',currency.value)
+    
+})
 
 
 
@@ -784,7 +795,7 @@ $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
     return li({class:'list-group-item justify-content-between d-flex'},div(span(e.categories.map((v)=>v.split(' ')[0]).join(' ')).css({
         fontWeight:600,
     }),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+currency.value,
-    button( {class:'btn btn-sm'},i({class:'bi bi-trash'})).on('click',()=>{
+    button( {class:'btn btn-sm',style:'margin-left:1rem;'},i({class:'bi bi-trash'})).on('click',()=>{
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1!=e.info && t.amount!=e.amount)
         selectedEvent.transactions=eventTransactions.value
         localforage.setItem('events',events.value)
@@ -922,7 +933,7 @@ const data = {
       data: geneventData,
       backgroundColor: [
         'rgb(99, 138, 255)',
-        'rgb(75, 192, 124)',
+        'rgb(96, 255, 162)',
         'rgb(255, 205, 86)',
         'rgb(201, 203, 207)',
         'rgb(235, 102, 54)',
@@ -974,28 +985,29 @@ const data = {
     let categoryDisplay=derived(()=>categories.value.filter(c=>c.type==listed))
 
     $el(`#cat-list-${listed}-editor`).forEvery(categoryDisplay,(c,index)=>{
-        return li({class:'list-group-item d-flex justify-content-between align-items-center',},c.name||c,span(span(`${formatMoney(geneventData[index])}${currency.value}`),
+        return li({class:'list-group-item d-flex gap-3 justify-content-between align-items-center',},c.name||c,span(span(`${formatMoney(geneventData[index])}${currency.value}`),
         
-        button({class:'btn btn-sm ml-5'},i({class:'bi bi-trash'})).on('click',(e)=>{
+        button({class:'btn btn-sm ',style:'margin-left:1rem;'},i({class:'bi bi-trash'})).on('click',(e)=>{
             e.stopPropagation()
            if(confirm(`are you sure you want to delete ${c.name||c}?`)){ 
             categories.value=categories.value.filter(cat=>(cat.name||cat)!=(c.name||c))
             localforage.setItem('categories',categories.value)
            }
-        }))).on('click',(event)=>{
+        }))).bindClass(derived(()=>c.isSubCat),'bg-secondary-subtle').on('click',(event)=>{
             $el('#list-'+listed).html('')
             events.value.filter((e)=>e.date.includes(`-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`)).forEach(e=>{
                 if(e.transactions){
 
                     e.transactions.forEach(t=>{
                         if(t.categories.includes(c.name||c)){
-                            li({class:'list-group-item justify-content-between d-flex'},div(t.info),div({class:'ms-auto '+(t.type=='income' ? 'text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+currency.value,
-                            button( {class:'btn btn-sm'},e.date,'  from ',e.name).on('click',(s)=>{
-                                s.stopPropagation()
-                                selectedEvent=e
-                                openEvent(e)
-                            })
-                        )).addTo($el('#list-'+listed))
+                            li({class:'list-group-item justify-content-between align-items-center d-flex '},
+                                div({class:'d-flex flex-column '},span({class:'fs-5'},t.info),span({class:'text-secondary'},e.date,' from ',e.name)),
+                                div({style:'margin-left:2rem;',class:''+(t.type=='income' ? ' text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+currency.value,
+                        )).on('click',(s)=>{
+                            s.stopPropagation()
+                            selectedEvent=e
+                            openEvent(e)
+                        }).addTo($el('#list-'+listed))
                         }
                     })
                 }
