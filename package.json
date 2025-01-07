@@ -6,6 +6,7 @@
   "dependencies": {
     "chart.js": "^4.4.7",
     "dominity": "^6.3.9",
+    "ical.js": "^2.1.0",
     "marked": "^15.0.4",
     "marked-alert": "^2.1.2",
     "marked-footnote": "^1.2.4",

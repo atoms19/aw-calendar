@@ -1,6 +1,6 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement} from "dominity"
 import swipeDetector from "./swipe"
-import { formatDate, formatMoney, removeFormatting } from "./utils"
+import { formatDate, formatMoney, parseICS, removeFormatting } from "./utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
 import { marked } from "marked"
 import markedKatex from "marked-katex-extension"
@@ -785,6 +785,20 @@ $el('#curr-inp').attr('value',currency.value).on('change',(e)=>{
 
 
 
+$el('#ics-select').on('change',async(e)=>{
+    let file= e.target.files[0]
+    if (!file) return 
+    let data=await file.text()
+
+    events.value=[...events.value,...parseICS(data)]
+    localforage.setItem('events',events.value)
+loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
+    
+
+
+})
+
 //----------------------------------expense tracker ---------------------------------------------------
 
 
@@ -1001,8 +1015,8 @@ const data = {
                     e.transactions.forEach(t=>{
                         if(t.categories.includes(c.name||c)){
                             li({class:'list-group-item justify-content-between align-items-center d-flex '},
-                                div({class:'d-flex flex-column '},span({class:'fs-5'},t.info),span({class:'text-secondary'},e.date,' from ',e.name)),
-                                div({style:'margin-left:2rem;',class:''+(t.type=='income' ? ' text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+currency.value,
+                                div({class:'d-flex flex-column '},span({class:''},t.info),span({class:'text-secondary'},e.date,' from ',e.name)),
+                                div({style:'margin-left:1rem;',class:''+(t.type=='income' ? ' text-primary':' text-danger')},(t.type=='income'?'+':'-')+formatMoney(t.amount)+currency.value,
                         )).on('click',(s)=>{
                             s.stopPropagation()
                             selectedEvent=e
