@@ -57,8 +57,13 @@
                   <li><a class="dropdown-item" href="#"  id="dark-theme-btn">Theme</a></li>
                   <li><a class="dropdown-item" href="#"  id="theme-btn">Flavor</a></li>
                   <li><a class="dropdown-item" href="#"  id="curr-inp">Currency : <input type="text" style='width:1rem;' class="scary-ghost-input"></a></li>
-                  <li><a class="dropdown-item" href='#' id='import-button'>Import data : <input type='file' accept=".ics" name="fileics"  class='form-control' id="ics-select" style="width:rem"/> </a></li>
-                  <!-- <li><a class="dropdown-item" href='#' id='export-button'>Export data</a></li> -->
+                  <li class="dropdowntoggle" for="data-more"><a class="dropdown-item"  href="#">export imort </a></li>
+                  <ul class="dropdown-menu dropdown-start" id="data-more">
+                    <li><a class="dropdown-item" href='#' id='import-button'>Import data : <input type='file' accept=".ics" name="fileics"  class='form-control' id="ics-select" style="width:rem"/> </a></li>
+                  <li><a class="dropdown-item" href='#' id='export-button'>Export data</a></li>
+                  <li><a class="dropdown-item" href="#" id="load-backup">load from backup <input type='file' accept=".json" name="fileics"  class='form-control' id="backup-select" style="width:rem"/></a></li>
+                  <li><a class="dropdown-item" href="#" id="backup">backup data</a></li>
+                  </ul>
                   
 
 

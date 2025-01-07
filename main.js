@@ -18,8 +18,6 @@ marked.use(markedKatex({throwOnError:false}),markedFootnote(),markedAlert({
 localforage.config({
     name: 'calendar',
     version:2.0,
-
-    
 })
 
 
@@ -1012,7 +1010,7 @@ const data = {
             events.value.filter((e)=>e.date.includes(`-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`)).forEach(e=>{
                 if(e.transactions){
 
-                    e.transactions.forEach(t=>{
+                    e.transactions.forEach(t=>{ 
                         if(t.categories.includes(c.name||c)){
                             li({class:'list-group-item justify-content-between align-items-center d-flex '},
                                 div({class:'d-flex flex-column '},span({class:''},t.info),span({class:'text-secondary'},e.date,' from ',e.name)),
