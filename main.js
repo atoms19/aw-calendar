@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement, h1} from "dominity"
 import swipeDetector from "./swipe"
 import { formatDate, formatMoney, parseICS, removeFormatting } from "./utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
@@ -66,7 +66,7 @@ let selected=0
 getEvents()
 
 let istaskMode=state(false)
-let dateChecks=[]
+let dateChecks=new Set()
 function loadCurrentMonth(year,month){
 
     calendarBody.html('')
@@ -150,13 +150,13 @@ let currentDay=0
 
                             let [startDay,startMonth,startYear]=event.date.split('-')
                             let [endDay,endMonth,endYear]=event.endDate.split('-')
-                            dateChecks.push({
+                            dateChecks.add({
                                 start:new Date(startYear,startMonth-1,startDay),
                                 end:new Date(endYear,endMonth-1,endDay),
                                 color:event.type,
                                 event:event
                             })
-                            dateChecks.sort((a,b)=>b.end-a.end )
+                            dateChecks=new Set(Array.from(dateChecks).sort((a,b)=>b.end-a.end ))
                             console.log(dateChecks)
                            
                         }
@@ -164,7 +164,7 @@ let currentDay=0
             })
             let isEndBlock=false;
 
-dateChecks.forEach(dateCheck=>{
+Array.from(dateChecks).forEach(dateCheck=>{
                 if(thisDate>=dateCheck.start && thisDate<=dateCheck.start){
 
                     dateElem.attr({class:'bg-'+dateCheck.color+' text-white'}).css({
@@ -184,9 +184,10 @@ dateChecks.forEach(dateCheck=>{
                         
                     })
                    isEndBlock=true
+                   //dateChecks=dateChecks.filter(dc=>dc.event!=dateCheck.event)
                     
                 }
-            })
+            })  
                 
             
 
@@ -570,6 +571,13 @@ taskBtn.on("click",()=>{
     
 })
 
+$el('#section-btn').on('click',()=>{
+    selectedEvent.subtasks.push({
+        SectionName:taskname.value || 'new section',
+        
+    })
+    updateTaskList()
+})
 
 
 function dropZone(i){
@@ -653,6 +661,36 @@ function updateTaskList(){
     */
    selectedEvent.subtasks.forEach((t,i)=>{
 
+    if(t.SectionName!==undefined){
+        let d=dropZone(i)
+        d.addTo(tasklist)
+        let sec=div({class:'d-flex justify-content-between  align-items-center rounded-2 mb-1 py-2 px-3','draggable':'true',},
+            h2(t.SectionName,{contentEditable:true}).on('input',()=>{
+                t.SectionName=sec.elem.innerText
+                
+                localforage.setItem('events',events.value)
+            }).on('blur',()=>{
+                if(sec.elem.innerText.trim()==''){
+                    selectedEvent.subtasks.splice(i,1)
+                localforage.setItem('events',events.value)
+                    updateTaskList()
+
+                    }
+            }).on('focus',()=>{
+                let sel = window.getSelection();
+                let range = document.createRange();
+                range.selectNodeContents(sec.elem.childNodes[0]);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                // sec.elem.focus();    
+            }),
+            button({class:'btn btn-sm'}).on("click",()=>{
+                
+            })
+        ).addTo(tasklist)
+
+    }else{
 let done=state(t.done)
 let d=dropZone(i)
 d.addTo(tasklist)
@@ -722,6 +760,7 @@ effect(()=>{
   localforage.setItem('events',events.value)
 
 })
+    }
     })
 
 
