@@ -332,15 +332,19 @@ function selectDate(date,elem){
     if($el('#event-name').elem.hasAttribute('disabled')){
         $el('#event-name').elem.removeAttribute('disabled')
     }
+
+    $el("#sort-btn").elem.classList.remove('d-none')
  d=date
     selectedDateDisplay.html(d.toLocaleString("default",{day:'numeric',month:'long',year:'numeric'}))
-    if(!selected){
-        selected=elem
-        selected.elem.classList.add('selected')
-    }else{
-        selected.elem.classList.remove('selected')
-        selected=elem
-        selected.elem.classList.add('selected')
+    if(elem){
+        if(!selected){
+            selected=elem
+            selected.elem.classList.add('selected')
+        }else{
+            selected.elem.classList.remove('selected')
+            selected=elem
+            selected.elem.classList.add('selected')
+        }
     }
 
     updateEventList()
@@ -521,7 +525,7 @@ fb.on('swipedown',monthDown)
 let taskBtn=$el("#task-btn")
 let taskInp=$el("#task-input")
 
-let sound=new Audio('./success.mp3')
+let sound=new Audio('./public/success.mp3')
 sound.preload='auto'
 
 
@@ -1274,3 +1278,30 @@ $el('#remove-pin').on('click',()=>{
    // pickerMapLocationSet()
 })
 pickerMapLocationSet()
+
+
+$el('.search-wrapper').on('click',(e)=>e.target.classList.add('d-none'))
+$el("#search-btn").on('click',e=>$el('.search-wrapper').elem.classList.remove('d-none'))
+let querySearch=state('')
+$el('#ev-search-inp').model(querySearch).on('click',e=>e.stopPropagation())
+
+let searchResults=derived(()=>{
+    return events.value.filter((e)=>{
+       return e.name.startsWith(querySearch.value) || e?.location?.name.startsWith(querySearch.value)
+    })
+})
+
+$el("#ev-result-display").forEvery(searchResults,(r)=>{
+    return div({class:'list-group-item'},r.name).on('click',(e)=>{
+        e.stopPropagation()
+        let [date,month,year]=r.date.split('-')
+        currentDate=new Date(`${year}-${month}-${date}`)   
+loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+        
+        selectDate(currentDate)
+        openEvent(r)
+        
+
+        
+    })
+})

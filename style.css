@@ -11,7 +11,16 @@
 }
  */
 
-
+.search-wrapper{
+    position: fixed;
+    z-index: 100;
+    top:0;
+    left:0;
+    width: 100%;
+    padding: 1rem;
+    height: 100%;
+    background-color: rgba(65, 65, 65, 0.226);
+}
 
 .scary-ghost-input{
     background-color: transparent;
