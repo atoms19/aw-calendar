@@ -156,10 +156,14 @@ let currentDay=0
                                 color:event.type,
                                 event:event
                             })
+                            dateChecks.sort((a,b)=>b.end-a.end )
+                            console.log(dateChecks)
                            
                         }
 
             })
+            let isEndBlock=false;
+
 dateChecks.forEach(dateCheck=>{
                 if(thisDate>=dateCheck.start && thisDate<=dateCheck.start){
 
@@ -168,8 +172,9 @@ dateChecks.forEach(dateCheck=>{
                     })
                 }
                 if (thisDate>dateCheck.start && thisDate<dateCheck.end){
-                    
+                    if(!isEndBlock){
                     dateElem.attr({class:'bg-'+dateCheck.color+'-subtle'})
+                    }
                 }
                 
                 if(thisDate>=dateCheck.end && thisDate <=dateCheck.end){
@@ -178,7 +183,7 @@ dateChecks.forEach(dateCheck=>{
                         border:'1px solid var(--bs-'+dateCheck.event.type+'-border-subtle)',
                         
                     })
-                   
+                   isEndBlock=true
                     
                 }
             })
