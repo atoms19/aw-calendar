@@ -1320,5 +1320,7 @@ $el("#reminder-btn-set").on("click",()=>{
         $el('#reminder-time').elem.value=undefined
         selectedEvent.hasReminder=true
         localforage.setItem('events',events.value)
+    }else{
+        alert('not available')
     }
 })
