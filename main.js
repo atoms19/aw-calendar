@@ -525,7 +525,7 @@ fb.on('swipedown',monthDown)
 let taskBtn=$el("#task-btn")
 let taskInp=$el("#task-input")
 
-let sound=new Audio('./success.mp3')
+let sound=new Audio('.success.mp3')
 sound.preload='auto'
 
 
@@ -1280,7 +1280,7 @@ $el('#remove-pin').on('click',()=>{
 pickerMapLocationSet()
 
 
-$el('.search-wrapper').on('click',(e)=>e.target.classList.add('d-none'))
+$el('#search-wrap').on('click',(e)=>$el('#search-wrap').elem.classList.add('d-none'))
 $el("#search-btn").on('click',e=>$el('.search-wrapper').elem.classList.remove('d-none'))
 let querySearch=state('')
 $el('#ev-search-inp').model(querySearch).on('click',e=>e.stopPropagation())
@@ -1304,4 +1304,18 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 
         
     })
+})
+
+
+$el("#reminder-btn").on("click",()=>{
+    alert('scheduled notification')
+    if(window.ReactNativeWebView){
+        window.ReactNativeWebView.push(JSON.stringify(  {
+            type: "scheduleNotification", // Identify the message type
+            title:selectedEvent.name+' upcomming!',      // Notification title
+            body: `Your event  ${selectedEvent.name} starts soon!`, // Notification body
+            time: 60,                    // Trigger after 60 seconds
+        }))
+        
+    }
 })
