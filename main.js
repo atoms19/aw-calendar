@@ -1310,7 +1310,7 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 $el("#reminder-btn").on("click",()=>{
     alert('scheduled notification')
     if(window.ReactNativeWebView){
-        window.ReactNativeWebView.push(JSON.stringify(  {
+        window.ReactNativeWebView.postMessage(JSON.stringify(  {
             type: "scheduleNotification", // Identify the message type
             title:selectedEvent.name+' upcomming!',      // Notification title
             body: `Your event  ${selectedEvent.name} starts soon!`, // Notification body
