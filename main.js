@@ -66,7 +66,7 @@ let selected=0
 getEvents()
 
 let istaskMode=state(false)
-let dateCheck={}
+let dateChecks=[]
 function loadCurrentMonth(year,month){
 
     calendarBody.html('')
@@ -148,20 +148,25 @@ let currentDay=0
 
                         if(event.endDate){
 
-                            dateElem.attr({class:'bg-'+event.type+' text-white'}).css({
-                                border:'1px solid var(--bs-'+event.type+'-border-subtle)',
-                                
-                            })
                             let [startDay,startMonth,startYear]=event.date.split('-')
                             let [endDay,endMonth,endYear]=event.endDate.split('-')
-                            dateCheck.start=new Date(startYear,startMonth-1,startDay)
-                            dateCheck.end=new Date(endYear,endMonth-1,endDay)
-                            dateCheck.color=event.type
-                            dateCheck.event=event
+                            dateChecks.push({
+                                start:new Date(startYear,startMonth-1,startDay),
+                                end:new Date(endYear,endMonth-1,endDay),
+                                color:event.type,
+                                event:event
+                            })
+                           
                         }
 
             })
+dateChecks.forEach(dateCheck=>{
+                if(thisDate>=dateCheck.start && thisDate<=dateCheck.start){
 
+                    dateElem.attr({class:'bg-'+dateCheck.color+' text-white'}).css({
+                        border:'1px solid var(--bs-'+dateCheck.color+'-border-subtle)',
+                    })
+                }
                 if (thisDate>dateCheck.start && thisDate<dateCheck.end){
                     
                     dateElem.attr({class:'bg-'+dateCheck.color+'-subtle'})
@@ -176,6 +181,7 @@ let currentDay=0
                    
                     
                 }
+            })
                 
             
 
