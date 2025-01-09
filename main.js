@@ -438,6 +438,8 @@ let [viewMap,marker]=loadMap(0,0)
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
 
+
+
     $$el('.menu-target').forEach(el=>{
         if($el('#'+el.attr('for')).elem.checked) el.elem.click()  //automatically close all edit options when opening a new event 
         
@@ -1306,16 +1308,17 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
     })
 })
 
-
-$el("#reminder-btn").on("click",()=>{
+$el("#reminder-btn-set").on("click",()=>{
     alert('scheduled notification')
     if(window.ReactNativeWebView){
         window.ReactNativeWebView.postMessage(JSON.stringify(  {
             type: "scheduleNotification", // Identify the message type
-            title:selectedEvent.name+' upcomming!',      // Notification title
-            body: `Your event  ${selectedEvent.name} starts soon!`, // Notification body
-            time: 60,                    // Trigger after 60 seconds
+            title:selectedEvent.name+'is Comming Up!',      // Notification title
+            body: `Dont Forget about ${selectedEvent.name} !`, // Notification body
+            time: $el('#reminder-time').elem.value,                    // Trigger after 60 seconds
         }))
-        
+        $el('#reminder-time').elem.value=undefined
+        selectedEvent.hasReminder=true
+        localforage.setItem('events',events.value)
     }
 })
