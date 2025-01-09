@@ -525,7 +525,7 @@ fb.on('swipedown',monthDown)
 let taskBtn=$el("#task-btn")
 let taskInp=$el("#task-input")
 
-let sound=new Audio('./public/success.mp3')
+let sound=new Audio('./success.mp3')
 sound.preload='auto'
 
 
