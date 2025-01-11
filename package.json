@@ -11,6 +11,7 @@
     "marked-alert": "^2.1.2",
     "marked-footnote": "^1.2.4",
     "marked-highlight": "^2.2.1",
-    "marked-katex-extension": "^5.1.4"
+    "marked-katex-extension": "^5.1.4",
+    "rrule": "^2.1.0"
   }
 }

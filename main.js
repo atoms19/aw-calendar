@@ -1,11 +1,13 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement, h1} from "dominity"
 import swipeDetector from "./swipe"
-import { formatDate, formatMoney, parseICS, removeFormatting } from "./utils"
+import { formatMoney, parseICS, removeFormatting } from "./utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
 import { marked } from "marked"
 import markedKatex from "marked-katex-extension"
 import markedFootnote from "marked-footnote"
 import markedAlert from "marked-alert"
+import  {RRule} from "rrule"
+import { supportsEventListenerOptions } from "chart.js/helpers"
 
 
 marked.use(markedKatex({throwOnError:false}),markedFootnote(),markedAlert({
@@ -67,6 +69,35 @@ getEvents()
 
 let istaskMode=state(false)
 let dateChecks=new Set()
+
+function getRepeatingEventList(start,stop){
+    let repeatingEvents=events.value.filter(events=>events.rrule!=undefined)
+    let dupeEvents=[]
+    repeatingEvents.forEach(r=>{
+        let rule=RRule.fromString(r.rrule)
+        let occurrences=rule.between(start,stop)
+        let createdEvents=occurrences.map(date=>{
+            return {
+                name:r.name,
+                id:Math.random(),
+                note:r.note,
+                type:r.type,
+                subtasks:[...r.subtasks],
+                date:`${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`,
+                isDuplicate:r.id
+            }
+        })
+        dupeEvents=[...dupeEvents,...createdEvents]
+    })
+
+    dupeEvents=dupeEvents.filter(de=>{
+        return !events.value.filter(e=>e.date==de.date && e?.isClonedDuplicate==de.isDuplicate).length
+    })
+        return dupeEvents
+
+
+
+}
 function loadCurrentMonth(year,month){
 
     calendarBody.html('')
@@ -94,6 +125,10 @@ let currentDay=0
     let firstDayOfNextMonth=realNextMonth.getDate()
     var selected=0
     let currWeekContainer
+
+    let dupeEvents=getRepeatingEventList(m,realNextMonth)
+
+    
     
     for(let i=0;i<35;i++){
         
@@ -136,9 +171,12 @@ let currentDay=0
 
             dateElem.child(0).html(i-startat+1)
 
-           let  monthlyEvents=events.value.filter((e)=>e.date==`${i-startat+1}-${month+1}-${year}`)
-
-            monthlyEvents.forEach(event=>{
+           let  monthlyEvents=[...events.value,...dupeEvents].filter((e)=>e.date==`${i-startat+1}-${month+1}-${year}`)
+            
+            monthlyEvents.forEach(event=>{  
+                if(event.rrule){
+                    console.log(event.rrule)
+                }
                         
                         dateElem.child(0)
                         span(
@@ -368,6 +406,9 @@ function selectDate(date,elem){
 
 function updateEventList(){
 
+    let dupes=getRepeatingEventList(new Date(d.getFullYear(),d.getMonth(),d.getDate()-1),new Date(d.getFullYear(),d.getMonth(),d.getDate()+1))
+    console.log(dupes)
+
     let targetEvents=events.value.filter(e=>{
         if(e.date && e.endDate){
             let [startDay,startMonth,startYear]=e.date.split('-')
@@ -378,7 +419,7 @@ function updateEventList(){
         }
         return e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`
     })
-    
+    targetEvents=[...targetEvents,...dupes]
     eventDisplay.html('')
 
     if(typeof targetEvents ==typeof []){
@@ -417,7 +458,14 @@ function updateEventList(){
                 )
             
             ).on('click',()=>{
-                openEvent(te)
+                if(te.isDuplicate==undefined) {
+                    openEvent(te)
+                }else{
+                    //bulshitmarker
+                   events.value=[...events.value,{...te,isClonedDuplicate:te.isDuplicate}]
+                   localforage.setItem("events",events.value)
+                   openEvent(events.value.filter(e=>e.id==te.id)[0])
+                }
             }).on('dragstart',(e)=>{
                 e.dataTransfer.allowedEffect='all'
                 e.dataTransfer.setData('text/plain',te.id)
@@ -1373,4 +1421,20 @@ $el("#reminder-btn-set").on("click",()=>{
     }else{
         alert('not available')
     }
+})
+
+//------
+
+$el("#daily-set").on("click",()=>{
+   let startDate=selectedEvent.date.split('-')
+   let dts=new Date(startDate[2],startDate[1]-1,startDate[0])
+  let option={
+    freq:RRule.DAILY,
+    interval:1,
+    dtstart:dts
+  }
+
+  selectedEvent.rrule=RRule.optionsToString(option)
+  localforage.setItem("events",events.value)
+  console.log("successfully added rrule to this event ")
 })

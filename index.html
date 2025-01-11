@@ -173,11 +173,19 @@
               </button>
               <ul class="dropdown-menu" id="drop">
                 <li><a class="dropdown-item" href="#" id="duplicate-btn">Duplicate event</a></li>
-                <li><a class="dropdown-item" href="#">Repeat event</a></li>
+                <li><a class="dropdown-item dropdowntoggle" for='repeat-menu' href="#">Repeat event</a></li>
+                <ul class="dropdown-menu  dropdown" id="repeat-menu">
+                  <li><a class="dropdown-item" href="#" >none</a></li>
+                  <li><a class="dropdown-item" href="#" id="daily-set">daily</a></li>
+                  <li><a class="dropdown-item" href="#">weekly this day</a></li>
+                  <li><a class="dropdown-item" href="#">Monthly on this date</a></li>
+                  <li><a class="dropdown-item" href="#">yearly on this date</a></li>
+                  <li><a class="dropdown-item" href="#">custom</a></li>
+              </ul>
                 <li><a class="dropdown-item dropdowntoggle" for="reminders" href="#" id="reminder-btn">Remind me</a></li>
-                <ul class="dropdown-menu dropdown-bottom" id="reminders" >
-                    <li><a class="dropdown-item"><input class="form-control" type="datetime-local" id="reminder-time"/></a></li>
-                    <li class=""><button class="m-1 ml-3 btn btn-primary" id="reminder-btn-set">set reminder</button></li>
+                <ul class="dropdown-menu  dropdown" id="reminders" >
+                    <li><a class="dropdown-item "><input class="form-control form-control-sm" type="datetime-local" id="reminder-time"/></a></li>
+                    <li class=""><button class="m-1 ml-3 btn btn-primary btn-sm" id="reminder-btn-set">set reminder</button></li>
                 </ul>
                 <li><a class="dropdown-item" href="#">Lock event</a></li>
                 <li><h6 class="dropdown-header">Priority</h6></li>
