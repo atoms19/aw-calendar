@@ -1469,3 +1469,19 @@ $el("#monthly-set").on("click",()=>{
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
 })
+
+$el("#yearly-set").on("click",()=>{
+    let startDate=selectedEvent.date.split('-')
+    let dts=new Date(startDate[2],startDate[1]-1,startDate[0])
+    let option={
+        freq:RRule.YEARLY,
+        interval:1,
+        dtstart:dts,
+        bymonth:[dts.getMonth()],
+        bymonthday:[dts.getDate()]
+    }
+    
+    selectedEvent.rrule=RRule.optionsToString(option)
+    localforage.setItem("events",events.value)
+    console.log("successfully added rrule to this event ")
+})
