@@ -466,6 +466,7 @@ function updateEventList(){
                     note:te.note, 
                     subtasks:[...te.subtasks],
                     date:te.date,
+                    type:te.type,
                     id:te.id,
                     isClonedDuplicate:te.isDuplicate}]  
                    localforage.setItem("events",events.value)
@@ -500,8 +501,23 @@ export let selectedEvent;
 
 
 let [viewMap,marker]=loadMap(0,0)
+let roption=state('none')
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
+    
+    if(te.rrule!=undefined){
+        if(te.rrule.includes('DAILY')){
+            roption.value='daily'
+        }else if(te.rrule.includes('WEEKLY')){
+            roption.value='weekly'
+
+        }else if(te.rrule.includes('YEARLY')){
+            roption.value='yearly'
+        }
+    }
+
+
+
 
 
 
@@ -1442,7 +1458,7 @@ $el("#daily-set").on("click",()=>{
   selectedEvent.rrule=RRule.optionsToString(option)
   localforage.setItem("events",events.value)
   console.log("successfully added rrule to this event ")
-})
+}).bindClass(derived(()=>roption.value=='daily'),'active')
 
 
 $el("#weekly-set").on("click",()=>{
@@ -1458,7 +1474,7 @@ $el("#weekly-set").on("click",()=>{
    selectedEvent.rrule=RRule.optionsToString(option)
    localforage.setItem("events",events.value)
    console.log("successfully added rrule to this event ")
- })
+ }).bindClass(derived(()=>roption.value=='weekly'),'active')
 
 $el("#monthly-set").on("click",()=>{
     let startDate=selectedEvent.date.split('-')
@@ -1473,18 +1489,18 @@ $el("#monthly-set").on("click",()=>{
     selectedEvent.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
-})
+}).bindClass(derived(()=>roption.value=='monthly'),'active')
 
 $el("#yearly-set").on("click",()=>{
     let startDate=selectedEvent.date.split('-')
     let dts=new Date(startDate[2],startDate[1]-1,startDate[0])
-    let option=new RRule({
+    let option={
         freq: RRule.YEARLY,
         bymonth: [dts.getMonth()+1],
         bymonthday: [dts.getDate()],
-      })
+      }
     
     selectedEvent.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
-})
+}).bindClass(derived(()=>roption.value=='yearly'),'active')
