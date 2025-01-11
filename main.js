@@ -462,7 +462,12 @@ function updateEventList(){
                     openEvent(te)
                 }else{
                     //bulshitmarker
-                   events.value=[...events.value,{...te,isClonedDuplicate:te.isDuplicate}]
+                   events.value=[...events.value,{name:te.name,
+                    note:te.note, 
+                    subtasks:[...te.subtasks],
+                    date:te.date,
+                    id:te.id,
+                    isClonedDuplicate:te.isDuplicate}]  
                    localforage.setItem("events",events.value)
                    openEvent(events.value.filter(e=>e.id==te.id)[0])
                 }
@@ -1447,7 +1452,7 @@ $el("#weekly-set").on("click",()=>{
      freq:RRule.WEEKLY,
      interval:1,
      dtstart:dts,
-        byweekday:[dts.getDay()]
+        byweekday:[dts.getDay()-1]
    }
  
    selectedEvent.rrule=RRule.optionsToString(option)
@@ -1473,13 +1478,11 @@ $el("#monthly-set").on("click",()=>{
 $el("#yearly-set").on("click",()=>{
     let startDate=selectedEvent.date.split('-')
     let dts=new Date(startDate[2],startDate[1]-1,startDate[0])
-    let option={
-        freq:RRule.YEARLY,
-        interval:1,
-        dtstart:dts,
-        bymonth:[dts.getMonth()],
-        bymonthday:[dts.getDate()]
-    }
+    let option=new RRule({
+        freq: RRule.YEARLY,
+        bymonth: [dts.getMonth()+1],
+        bymonthday: [dts.getDate()],
+      })
     
     selectedEvent.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
