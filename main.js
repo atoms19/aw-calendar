@@ -1445,6 +1445,11 @@ $el("#reminder-btn-set").on("click",()=>{
 })
 
 //------
+$el("#none-set").on("click",()=>{
+    selectedEvent.rrule=undefined
+    localforage.setItem("events",events.value)
+}).bindClass(derived(()=>roption.value=='none'),'active')
+
 
 $el("#daily-set").on("click",()=>{
    let startDate=selectedEvent.date.split('-')
@@ -1458,6 +1463,8 @@ $el("#daily-set").on("click",()=>{
   selectedEvent.rrule=RRule.optionsToString(option)
   localforage.setItem("events",events.value)
   console.log("successfully added rrule to this event ")
+  loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
 }).bindClass(derived(()=>roption.value=='daily'),'active')
 
 
@@ -1474,6 +1481,8 @@ $el("#weekly-set").on("click",()=>{
    selectedEvent.rrule=RRule.optionsToString(option)
    localforage.setItem("events",events.value)
    console.log("successfully added rrule to this event ")
+   loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
  }).bindClass(derived(()=>roption.value=='weekly'),'active')
 
 $el("#monthly-set").on("click",()=>{
@@ -1489,6 +1498,7 @@ $el("#monthly-set").on("click",()=>{
     selectedEvent.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 }).bindClass(derived(()=>roption.value=='monthly'),'active')
 
 $el("#yearly-set").on("click",()=>{
@@ -1503,4 +1513,6 @@ $el("#yearly-set").on("click",()=>{
     selectedEvent.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
+    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
 }).bindClass(derived(()=>roption.value=='yearly'),'active')
