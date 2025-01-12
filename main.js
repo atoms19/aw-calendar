@@ -442,6 +442,10 @@ function updateEventList(){
                         updateEventList()
                     
                 }),
+                span({class:'bi bi-text-left'}).bindClass(derived(()=>{
+                    if(!te.note) return true 
+                    return !te.note.length>=100
+                }),'d-none'),
                 span(te.name)),
                 div({class:'d-flex gap-3'},
                     button({class:'btn btn-'+te.type},
