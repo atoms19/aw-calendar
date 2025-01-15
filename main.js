@@ -931,19 +931,30 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 
 
 let eventTransactions=state([])
-
+let transactionSum=derived(()=>{
+    let stsum=0
+    eventTransactions.value.forEach(e=>{
+        stsum+= e.type==='income' ? e.amount : -e.amount 
+    })
+    return stsum
+})
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
+    
+    
+    
     return li({class:'list-group-item justify-content-between d-flex'},div({style:'max-width:60%;'},span(e.categories.map((v)=>v.split(' ')[0]).join(' ')).css({
         fontWeight:600,
     }),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+currency.value,
-    button( {class:'btn btn-sm',style:'margin-left:1rem;'},i({class:'bi bi-trash'})).on('click',()=>{
+    button( {class:'btn btn-sm',style:'margin-left:1rem;'},i({class:'bi bi-trash'})).on('click',()=>{ 
         eventTransactions.value=eventTransactions.value.filter(t=>t.info1!=e.info && t.amount!=e.amount)
         selectedEvent.transactions=eventTransactions.value
         localforage.setItem('events',events.value)
-
+        
     }))
 )
 })
+
+$el("#transaction-total",{class:'text-secondary',style:'font-size:0.8rem;margin-left:0.25rem;'},()=>`total: ${transactionSum.value <0 ? '-' :'+'} ${formatMoney(transactionSum.value)}${currency.value}`).showIf(()=>eventTransactions.value.length>0)
 
 
 
