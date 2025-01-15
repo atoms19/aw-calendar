@@ -536,6 +536,9 @@ function openEvent(te){
     if(te.location!=undefined){
         viewMap.setView([te.location.lat,te.location.long],13)
         marker.setLatLng([te.location.lat,te.location.long]).bindPopup(te.location.name).openPopup()
+        setInterval(function () {
+            viewMap.invalidateSize();
+         }, 100);
         $el('#map').elem.classList.remove('d-none')
     }else{
         $el('#map').elem.classList.add('d-none')
@@ -1361,6 +1364,9 @@ function loadMap(lat,long){
             const { latitude, longitude } = position.coords;
             pickerMap.setView([latitude, longitude], 13); // Center map at current location
              pickerMarker=L.marker([latitude, longitude]).addTo(pickerMap).bindPopup('You are here!').openPopup();
+             setInterval(function () {
+                pickerMap.invalidateSize();
+             }, 100);
           },
           (error) => {
             console.error('Error getting location:', error);
