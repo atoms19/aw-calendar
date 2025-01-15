@@ -933,7 +933,7 @@ loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 let eventTransactions=state([])
 
 $el('#transaction-list').html('').forEvery(eventTransactions,(e)=>{
-    return li({class:'list-group-item justify-content-between d-flex'},div(span(e.categories.map((v)=>v.split(' ')[0]).join(' ')).css({
+    return li({class:'list-group-item justify-content-between d-flex'},div({style:'max-width:60%;'},span(e.categories.map((v)=>v.split(' ')[0]).join(' ')).css({
         fontWeight:600,
     }),' ',e.info),div({class:'ms-auto '+(e.type=='income' ? 'text-primary':' text-danger')},(e.type=='income'?'+':'-')+formatMoney(e.amount)+currency.value,
     button( {class:'btn btn-sm',style:'margin-left:1rem;'},i({class:'bi bi-trash'})).on('click',()=>{
