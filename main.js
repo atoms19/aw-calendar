@@ -1564,3 +1564,35 @@ $el("#yearly-set").on("click",()=>{
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 
 }).bindClass(derived(()=>roption.value=='yearly'),'active')
+
+
+$el('#image-form').on('submit',async(e)=>{
+
+    e.preventDefault()
+    let file= $el('#image-inp').elem.files[0]
+    let reader=new FileReader()
+    reader.readAsDataURL(file)
+
+    reader.onload=()=>{
+        let result=reader.result
+        
+
+        let img=new Image()
+        img.src=result
+
+        img.onload=()=>{
+            let c=canvas({width:400,height:300})
+            let ctx=c.elem.getContext('2d')
+            ctx.drawImage(img,0,0,400,300)
+
+            c.elem.toBlob((blob)=>{ 
+                let url=URL.createObjectURL(blob)
+                console.log("space:",url.length)
+
+                
+            })
+        }
+    }
+
+
+})
