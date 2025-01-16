@@ -221,21 +221,25 @@
           <label class="form-label d-none mt-4">time</label>
          <input class="form-control d-none" id="time-input" type="time"> 
 
-          <div class="d-flex flex-row-reverse w-full py-2 pb-1">
+          <div class="d-flex flex-row-reverse w-full py-2 pb-1">    
            
-           <div class="btn-group"> 
+           <div class="btn-group" id="event-toolbar"> 
 
-<input type="checkbox" class="btn-check" id="taginpcheck" autocomplete="off">
-<label for="taginpcheck" id="exp-btn" class="btn menu-target btn-primary"><i class="bi bi-currency-dollar"></i></label>    
-
- <input type="checkbox" class="btn-check" id="locinpcheck" autocomplete="off">
-<label for="locinpcheck" id="loc-btn" class="btn menu-target btn-primary"><i class="bi bi-geo-alt-fill"></i></label>  
-
-<input type="checkbox" class="btn-check" id="taskinpcheck" autocomplete="off">
-<label for="taskinpcheck" id="task-btn" class="btn menu-target btn-primary"><i class="bi bi-ui-checks"></i></label>
-
-<input type="checkbox" class="btn-check" id="eventinpcheck" autocomplete="off">
-<label for="eventinpcheck" class="btn  menu-target btn-primary" id="edit-btn"><i class="bi bi-pencil-square"></i></label>
+              <input type="radio" class="btn-check" value="image" id="imginpcheck" name="menu-options" autocomplete="off">
+              <label for="imginpcheck" id="img-btn" class="btn menu-target btn-primary"><i class="bi bi-images"></i></label>    
+              
+              <input type="radio" class="btn-check" value="transaction" id="taginpcheck" name="menu-options" autocomplete="off">
+              <label for="taginpcheck" id="exp-btn" class="btn menu-target btn-primary"><i class="bi bi-currency-dollar"></i></label>    
+              
+              <input type="radio" class="btn-check" id="locinpcheck" value="location" name="menu-options" autocomplete="off">
+              <label for="locinpcheck" id="loc-btn" class="btn menu-target btn-primary"><i class="bi bi-geo-alt-fill"></i></label>  
+              
+              <input type="radio" class="btn-check" id="taskinpcheck" value="tasks" name="menu-options" autocomplete="off">
+              <label for="taskinpcheck" id="task-btn" class="btn menu-target btn-primary"><i class="bi bi-ui-checks"></i></label>
+              
+              <input type="radio" class="btn-check" id="eventinpcheck" value="note" name="menu-options" autocomplete="off">
+              <label for="eventinpcheck" id="edit-btn" class="btn menu-target btn-primary"><i class="bi bi-pencil-square"></i></label>
+              
           </div>
  </div>
 
@@ -252,7 +256,7 @@
 <div id="task-list"></div>
 
 
-      <div class="m-2 d-none" id="task-input">
+      <div class="m-2" id="section-tasks">
         <span class="section-add" id="section-btn"></span>
         <form class="input-group" id="taskform">
         <input class="form-control form-control-md" id="taskinp" placeholder="enter task name to be added to event" type="text">
@@ -263,7 +267,11 @@
 
     
  </div>
-                              <div class="d-none" id="note-edit">
+
+ <div id="section-image">
+  
+ </div>
+                              <div class="" id="section-note">
        
             <label class="mt-1 form-label">notes</label>
   <textarea placeholder="type your notes here ,markdown tips: # headings , **bold** _italic_ `code` ~strikethrough~" id="note-text" class="form-control" style="height:500px;"></textarea>
@@ -276,7 +284,7 @@
           <span id="transaction-total"> </span>
 
           
-          <div id="loc-edit" class="d-none">
+          <div id="section-location" class="">
             <div class="input-group">
               <input class="form-control form-control-md" id="location-inp" placeholder="enter location name" type="text">
               <button class="btn btn-primary btn-md" id="location-add"><i class="bi bi-pin"></i></button>
@@ -291,7 +299,7 @@
             <a id="remove-pin" href="#">remove pin</a>
           </div>
 
-          <div class="d-none mt-3" id="exp-edit">
+          <div class=" mt-3" id="section-transaction">
 
            
 
@@ -329,6 +337,8 @@
               
               
           </div>
+
+          
 
 
 

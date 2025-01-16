@@ -26,6 +26,8 @@ localforage.config({
 
 
 
+
+
 let calendarBody=$el("#calendar-body")
 let yearDisplay=$el("#year-display")
 let monthDisplay=$el("#month-display")
@@ -506,8 +508,13 @@ export let selectedEvent;
 
 let [viewMap,marker]=loadMap(0,0)
 let roption=state('none')
+
+//---------------------------------------event opening ---------------------------------------------------------
+
 function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
+    
+    updateMenus(true) //closing all 
     
     if(te.rrule!=undefined){
         if(te.rrule.includes('DAILY')){
@@ -521,14 +528,6 @@ function openEvent(te){
     }
 
 
-
-
-
-
-    $$el('.menu-target').forEach(el=>{
-        if($el('#'+el.attr('for')).elem.checked) el.elem.click()  //automatically close all edit options when opening a new event 
-        
-    })
     $el('#event-title').elem.innerText=te.name
     $el('#startDateInp').elem.value=te.date
     $el('#endDateInp').elem.value=te.endDate ||''
@@ -599,10 +598,6 @@ noteTextarea.on('keydown', function(e) {
     }
   });
 
-let editBtn=$el('#edit-btn')
-editBtn.on("click",(e)=>{
-    $el('#note-edit').elem.classList.toggle('d-none')
-})
 
 let fb=$el('#calendar-table')
 let ts=new swipeDetector(fb.elem)
@@ -612,9 +607,50 @@ fb.on('swipeup',monthUp)
 fb.on('swipedown',monthDown)
 
 
-let taskBtn=$el("#task-btn")
-let taskInp=$el("#task-input")
+let menuView=state('')
 
+
+
+
+$$el('[name="menu-options').forEach(elem=>{
+    elem.on("click",()=>{
+        if(menuView.value==elem.attr('value')){
+            updateMenus(true)
+        }else{
+            updateMenus()
+        }
+    })
+})
+
+effect(()=>{
+    console.log('yee',menuView.value)
+})
+
+function updateMenus(closeAll=false){
+    $$el("[name='menu-options']").forEach((elem)=>{
+        if(elem.elem.checked){
+            menuView.value=elem.elem.value
+            if(closeAll){
+            elem.elem.checked=false
+            menuView.value=''
+            updateMenus()
+            }
+        }
+        
+        if(menuView.value==''){
+            $el("#section-"+elem.elem.value).addClass('d-none')
+            }
+    
+        if(menuView.value==elem.elem.value){
+        $el("#section-"+elem.elem.value).removeClass('d-none')
+        }else{
+            $el("#section-"+elem.elem.value).addClass('d-none')
+        }
+    })
+}
+
+
+let taskBtn=$el("#task-btn")
 let sound=new Audio('.success.mp3')
 sound.preload='auto'
 
@@ -642,10 +678,7 @@ e.preventDefault()
     
 })
 
-taskBtn.on("click",()=>{
-    taskInp.elem.classList.toggle('d-none')
-    
-})
+
 
 $el('#section-btn').on('click',()=>{
     selectedEvent.subtasks.push({
@@ -961,13 +994,7 @@ $el("#transaction-total",{class:'text-secondary',style:'font-size:0.8rem;margin-
 
 
 
-$el('#exp-btn').on('click',()=>{
-    $el('#exp-edit').elem.classList.toggle('d-none')
-})
 
-$el('#loc-btn').on('click',()=>{
-    $el('#loc-edit').elem.classList.toggle('d-none')
-})
 
 let amount=state(null)
 let info=state(null)
