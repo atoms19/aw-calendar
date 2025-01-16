@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
+    <meta http-equiv="Content-Security-Policy" content="all">
 <link rel="favicon" href="'icons/iosicon.png"/>
     <link rel="manifest" href="manifest.json">
 
@@ -188,6 +189,9 @@
                     <li class=""><button class="m-1 ml-3 btn btn-primary btn-sm" id="reminder-btn-set">set reminder</button></li>
                 </ul>
                 <li><a class="dropdown-item" href="#">Lock event</a></li>
+                <li><a class="dropdown-item" href="#">Icon <input type="text" style='width:rem;' id='event-icon-inp' class="scary-ghost-input"></a></li>
+
+
                 <li><h6 class="dropdown-header">Priority</h6></li>
                 <li>
               
@@ -204,6 +208,7 @@
                 </form>
                
                 </li>
+                
               </ul>
              </div>
           </div>
@@ -223,10 +228,7 @@
 
           <div class="d-flex flex-row-reverse w-full py-2 pb-1">    
            
-           <div class="btn-group" id="event-toolbar"> 
-
-              <input type="radio" class="btn-check" value="image" id="imginpcheck" name="menu-options" autocomplete="off">
-              <label for="imginpcheck" id="img-btn" class="btn menu-target btn-primary"><i class="bi bi-images"></i></label>    
+           <div class="btn-group" id="event-toolbar">  
               
               <input type="radio" class="btn-check" value="transaction" id="taginpcheck" name="menu-options" autocomplete="off">
               <label for="taginpcheck" id="exp-btn" class="btn menu-target btn-primary"><i class="bi bi-currency-dollar"></i></label>    
@@ -268,15 +270,7 @@
     
  </div>
 
- <div id="section-image">
-  <form id="image-form">
-  <input class="form-control" type="file"  id="image-inp" />
-  <input placeholder="Enter a description (optional)" class="form-control mb-2" id="image-desc" type="text">
-  <button type="submit" class="btn btn-block btn-primary">upload</button>
-
-  </form>
-
- </div>
+ 
                               <div class="" id="section-note">
        
             <label class="mt-1 form-label">notes</label>

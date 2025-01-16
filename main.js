@@ -128,6 +128,8 @@ let currentDay=0
     var selected=0
     let currWeekContainer
 
+    
+    
     let dupeEvents=getRepeatingEventList(m,realNextMonth)
 
     
@@ -421,7 +423,7 @@ function updateEventList(){
         }
         return e.date==`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`
     })
-    targetEvents=[...targetEvents,...dupes]
+    targetEvents=Array.from(new Set([...targetEvents,...dupes]))
     eventDisplay.html('')
 
     if(typeof targetEvents ==typeof []){
@@ -445,8 +447,12 @@ function updateEventList(){
                     
                 }),
                 span({class:'bi bi-text-left'}).bindClass(derived(()=>{
-                    if(!te.note) return true 
+                    if(!te.note || te.icon) return true 
                     return !(te.note.length>=290)
+                }),'d-none'),
+                span({class:`bi bi-${te.icon||''}`}).bindClass(derived(()=>{
+                    if(!te.icon) return true 
+                    return false
                 }),'d-none'),
                 span(te.name)),
                 div({class:'d-flex gap-3'},
@@ -531,6 +537,8 @@ function openEvent(te){
     $el('#event-title').elem.innerText=te.name
     $el('#startDateInp').elem.value=te.date
     $el('#endDateInp').elem.value=te.endDate ||''
+
+    $el('#event-icon-inp').elem.value=te.icon || ''
 
     if(te.location!=undefined){
         viewMap.setView([te.location.lat,te.location.long],13)
@@ -1565,34 +1573,8 @@ $el("#yearly-set").on("click",()=>{
 
 }).bindClass(derived(()=>roption.value=='yearly'),'active')
 
-
-$el('#image-form').on('submit',async(e)=>{
-
-    e.preventDefault()
-    let file= $el('#image-inp').elem.files[0]
-    let reader=new FileReader()
-    reader.readAsDataURL(file)
-
-    reader.onload=()=>{
-        let result=reader.result
-        
-
-        let img=new Image()
-        img.src=result
-
-        img.onload=()=>{
-            let c=canvas({width:400,height:300})
-            let ctx=c.elem.getContext('2d')
-            ctx.drawImage(img,0,0,400,300)
-
-            c.elem.toBlob((blob)=>{ 
-                let url=URL.createObjectURL(blob)
-                console.log("space:",url.length)
-
-                
-            })
-        }
-    }
-
-
+$el('#event-icon-inp').on('change',(e)=>{
+    selectedEvent.icon=e.target.value 
+    localforage.setItem('events',events.value)
+    updateEventList()
 })
