@@ -1502,7 +1502,7 @@ let searchResults=derived(()=>{
 })
 
 $el("#ev-result-display").forEvery(searchResults,(r)=>{
-    return div({class:'list-group-item'},r.name).on('click',(e)=>{
+    return div({class:'list-group-item d-flex justify-content-between w-100'},span(r.name),span(r.date)).on('click',(e)=>{
         e.stopPropagation()
         let [date,month,year]=r.date.split('-')
         currentDate=new Date(`${year}-${month}-${date}`)   
