@@ -546,6 +546,7 @@ let roption=state('none')
 //---------------------------------------event opening ---------------------------------------------------------
 
 function openEvent(te){
+    try{
     offCanvasEvent.elem.classList.add('show')
     
     updateMenus(true) //closing all 
@@ -602,7 +603,9 @@ function openEvent(te){
     //renderMathInElement(noteDisplay.elem)
     hljs.highlightAll()
   updateTaskList()
- 
+}catch(e){
+    alert(JSON.stringify(e))
+}
 }
 
 
