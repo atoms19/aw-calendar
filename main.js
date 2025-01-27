@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, option, h2, canvas, derived, DominityElement, h1} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, a,option, h2, canvas, derived, DominityElement, h1} from "dominity"
 import swipeDetector from "./swipe"
 import { formatMoney, parseICS, removeFormatting } from "./utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
@@ -179,9 +179,8 @@ let currentDay=0
             
             monthlyEvents.forEach(event=>{  
                 if(event.rrule){
-                    console.log(event.rrule)
-                }
-                        
+                 return 
+                }       
                         dateElem.child(0)
                         span(
                             {class:'badge text-bg-'+event.type+' color-auto'},
@@ -428,6 +427,8 @@ function updateEventList(){
 
     if(typeof targetEvents ==typeof []){
         targetEvents.forEach((te)=>{
+            if(te.rrule) return
+
             let eventChecked=state(te.subtasks.every(task=>task.done))
             
         
@@ -480,6 +481,7 @@ function updateEventList(){
                     date:te.date,
                     type:te.type,
                     id:te.id,
+                    icon:te.icon,
                     isClonedDuplicate:te.isDuplicate}]  
                    localforage.setItem("events",events.value)
                    openEvent(events.value.filter(e=>e.id==te.id)[0])
@@ -522,13 +524,18 @@ function openEvent(te){
     
     updateMenus(true) //closing all 
     
-    if(te.rrule!=undefined){
-        if(te.rrule.includes('DAILY')){
+
+    if(te.rrule!=undefined || te.isClonedDuplicate){
+        let actor=te
+        if(te.isClonedDuplicate){
+            actor=events.value.filter(t=>t.id==te.isClonedDuplicate)[0]
+        }
+        if(actor.rrule.includes('DAILY')){
             roption.value='daily'
-        }else if(te.rrule.includes('WEEKLY')){
+        }else if(actor.rrule.includes('WEEKLY')){
             roption.value='weekly'
 
-        }else if(te.rrule.includes('YEARLY')){
+        }else if(actor.rrule.includes('YEARLY')){
             roption.value='yearly'
         }
     }
@@ -1502,8 +1509,14 @@ $el("#reminder-btn-set").on("click",()=>{
 
 //------
 $el("#none-set").on("click",()=>{
-    selectedEvent.rrule=undefined
+    let actor=selectedEvent
+  if(selectedEvent.isClonedDuplicate){
+      actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+  }
+    actor.rrule=undefined
     localforage.setItem("events",events.value)
+   loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
+
 }).bindClass(derived(()=>roption.value=='none'),'active')
 
 
@@ -1516,7 +1529,12 @@ $el("#daily-set").on("click",()=>{
     dtstart:dts
   }
 
-  selectedEvent.rrule=RRule.optionsToString(option)
+  let actor=selectedEvent
+  if(selectedEvent.isClonedDuplicate){
+      actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+  }
+  
+  actor.rrule=RRule.optionsToString(option)
   localforage.setItem("events",events.value)
   console.log("successfully added rrule to this event ")
   loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -1533,8 +1551,12 @@ $el("#weekly-set").on("click",()=>{
      dtstart:dts,
         byweekday:[dts.getDay()-1]
    }
- 
-   selectedEvent.rrule=RRule.optionsToString(option)
+   let actor=selectedEvent
+   if(selectedEvent.isClonedDuplicate){
+       actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+   }
+   
+   actor.rrule=RRule.optionsToString(option)
    localforage.setItem("events",events.value)
    console.log("successfully added rrule to this event ")
    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -1550,8 +1572,12 @@ $el("#monthly-set").on("click",()=>{
         dtstart:dts,
         bymonthday:[dts.getDate()]
     }
+    let actor=selectedEvent
+    if(selectedEvent.isClonedDuplicate){
+        actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+    }
     
-    selectedEvent.rrule=RRule.optionsToString(option)
+    actor.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -1566,7 +1592,12 @@ $el("#yearly-set").on("click",()=>{
         bymonthday: [dts.getDate()],
       }
     
-    selectedEvent.rrule=RRule.optionsToString(option)
+      let actor=selectedEvent
+      if(selectedEvent.isClonedDuplicate){
+          actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+      }
+      
+      actor.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
     console.log("successfully added rrule to this event ")
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -1578,3 +1609,5 @@ $el('#event-icon-inp').on('change',(e)=>{
     localforage.setItem('events',events.value)
     updateEventList()
 })
+
+
