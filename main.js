@@ -604,7 +604,7 @@ function openEvent(te){
     hljs.highlightAll()
   updateTaskList()
 }catch(e){
-    alert(e.note)
+    alert(te.note)
 }
 }
 
