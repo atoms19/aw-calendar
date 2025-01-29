@@ -1700,6 +1700,7 @@ function trackedHabitData(tasksState){
     let trackedHabits=state(tasksState)
 
     let body= tbody({class:''}).forEvery(trackedHabits,habit=>{
+        if(habit.SectionName) return 
         let [total,monthly]=calculateCount(habit.name)
         return tr(td(habit.name),td(`${monthly}`),td(`${total}`))
     })
@@ -1729,7 +1730,7 @@ function calculateCount(habitName){
         let [_,month,year]=eve.date.split('-')
         
         eve.subtasks.forEach(hab=>{
-            if(hab.SectionName) return 
+            
            if(hab.done && hab.name==habitName){
             habitCount+=1
             if((month==currentDate.getMonth()+1) && (year==currentDate.getFullYear())){
