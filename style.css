@@ -215,3 +215,16 @@ background-color: #10111256;
     font-weight: 700;
     z-index: 100;
 }
+
+.details{
+    margin-top: 1rem;
+    margin-bottom: 0.5 rem;
+
+}
+.summary{
+    padding: 1rem 0.5rem;
+    border-radius: var(--bs-border-radius-sm);
+    background-color: var(--bs-primary-bg-subtle);
+
+    
+}

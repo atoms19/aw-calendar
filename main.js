@@ -1,4 +1,4 @@
- import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, a,option, h2, canvas, derived, DominityElement, h1} from "dominity"
+ import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, a,option, h2, canvas, derived, details,summary,DominityElement, h1, ul, table, tbody, thead, th} from "dominity"
 import swipeDetector from "./swipe"
 import { formatMoney, parseICS, removeFormatting } from "./utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
@@ -39,6 +39,7 @@ let chime=state(false)
 
 let destroyer,destroyer2
 monthDisplay.on('click',async()=>{
+    trackers()
     $el('#calendar-section').elem.classList.add('d-none')
     $el('#month-view').elem.classList.remove('d-none')
     destroyer=await renderChart('pie-canvas')
@@ -134,7 +135,7 @@ let currentDay=0
 
     
     
-    for(let i=0;i<35;i++){
+    for(let i=0;i<42;i++){
         
         if((i)%7==0 || i==0){
             currWeekContainer=tr()
@@ -168,6 +169,7 @@ let currentDay=0
        
 
         if(i>=startat && i<lastday+startat){
+            
             let thisDate=new Date(year,month,1)
             thisDate.setDate(i-startat+1)
             
@@ -251,6 +253,7 @@ Array.from(dateChecks).forEach(dateCheck=>{
             dateElem.child(0).elem.classList.add('text-body-secondary')
 
         }else if(i>=lastday){
+            
             dateElem.child(0).html(firstDayOfNextMonth)
             firstDayOfNextMonth+=1
             dateElem.child(0).elem.classList.add('text-body-secondary')
@@ -501,14 +504,16 @@ function updateEventList(){
                     openEvent(te)
                 }else{
                     //bulshitmarker
+
                    events.value=[...events.value,{name:te.name,
                     note:te.note, 
-                    subtasks:[...te.subtasks],
+                    subtasks:JSON.parse(JSON.stringify(te.subtasks)),
                     date:te.date,
                     type:te.type,
                     id:te.id,
                     icon:te.icon,
                     isClonedDuplicate:te.isDuplicate}]  
+                    
                    localforage.setItem("events",events.value)
                    openEvent(events.value.filter(e=>e.id==te.id)[0])
                 }
@@ -566,6 +571,8 @@ function openEvent(te){
             roption.value='yearly'
         }
     }
+
+    console.log(te.isClonedDuplicate,"/",te.id,"/",te.isDuplicate)
 
 
     $el('#event-title').elem.innerText=te.name
@@ -1562,6 +1569,12 @@ $el("#daily-set").on("click",()=>{
   if(selectedEvent.isClonedDuplicate){
       actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
   }
+
+  if(actor.endDate){
+    let endDate=actor.split('-')
+    option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
+   }
+   
   
   actor.rrule=RRule.optionsToString(option)
   localforage.setItem("events",events.value)
@@ -1573,16 +1586,24 @@ $el("#daily-set").on("click",()=>{
 
 $el("#weekly-set").on("click",()=>{
     let startDate=selectedEvent.date.split('-')
+    
     let dts=new Date(startDate[2],startDate[1]-1,startDate[0])
    let option={
      freq:RRule.WEEKLY,
      interval:1,
      dtstart:dts,
-        byweekday:[dts.getDay()-1]
+        byweekday:[dts.getDay()-1],
+        
    }
+   
    let actor=selectedEvent
    if(selectedEvent.isClonedDuplicate){
        actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+   }
+
+   if(actor.endDate){
+    let endDate=actor.split('-')
+    option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
    }
    
    actor.rrule=RRule.optionsToString(option)
@@ -1605,6 +1626,12 @@ $el("#monthly-set").on("click",()=>{
     if(selectedEvent.isClonedDuplicate){
         actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
     }
+
+    if(actor.endDate){
+        let endDate=actor.split('-')
+        option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
+       }
+       
     
     actor.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
@@ -1625,6 +1652,11 @@ $el("#yearly-set").on("click",()=>{
       if(selectedEvent.isClonedDuplicate){
           actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
       }
+      if(actor.endDate){
+        let endDate=actor.split('-')
+        option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
+       }
+       
       
       actor.rrule=RRule.optionsToString(option)
     localforage.setItem("events",events.value)
@@ -1639,4 +1671,72 @@ $el('#event-icon-inp').on('change',(e)=>{
     updateEventList()
 })
 
+
+//-------------------------------tracker overview and tracking for habbits  ----------------------------------------------
+
+function trackers(){
+
+
+    let trackerAvailed=derived(()=>events.value.filter(e=>e.rrule!=undefined && e.subtasks.length))
+
+    $el("#tv").forEvery(trackerAvailed,tracker=>{
+        return details({class:'details'},
+            summary(tracker.name ,{class:'summary'}),
+
+            trackedHabitData(tracker.subtasks)
+
+        );
+    })
+
+}
+
+
+function trackedHabitData(tasksState){
+    if(!tasksState) return 
+
+    let trackedHabits=state(tasksState)
+
+    let body= tbody({class:''}).forEvery(trackedHabits,habit=>{
+        let [total,monthly]=calculateCount(habit.name)
+        return tr(td(habit.name),td(`${monthly}`),td(`${total}`))
+    })
+
+
+    return table({class:'table table-striped'},
+        thead(
+            tr({class:'table-primary'},
+            th("habbit"),
+            th("this month"),
+            th("total")
+            )
+        ),
+        body 
+    )
+
+
+}
+
+
+function calculateCount(habitName){
+    let duplicatedInstances=events.value.filter(e=>e.isClonedDuplicate!=undefined).filter(e=>e.isClonedDuplicate)
+    let habitCount=0 
+    let monthOnlyCount=0
+    
+    duplicatedInstances.forEach(eve=>{
+        let [_,month,year]=eve.date.split('-')
+        
+        eve.subtasks.forEach(hab=>{
+           if(hab.done && hab.name==habitName){
+            habitCount+=1
+            if((month==currentDate.getMonth()+1) && (year==currentDate.getFullYear())){
+                monthOnlyCount+=1
+            }
+    
+           }
+        })  
+        
+    })
+    return [habitCount,monthOnlyCount]
+
+}
 
