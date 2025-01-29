@@ -248,12 +248,15 @@ Array.from(dateChecks).forEach(dateCheck=>{
             }
 
 
+
         }else if(i<startat){
             dateElem.child(0).html(lastdayOfPreviousMonth-(startat-(i+1)))
             dateElem.child(0).elem.classList.add('text-body-secondary')
 
         }else if(i>=lastday){
-            
+            if(i>=35){
+                break
+            }
             dateElem.child(0).html(firstDayOfNextMonth)
             firstDayOfNextMonth+=1
             dateElem.child(0).elem.classList.add('text-body-secondary')
