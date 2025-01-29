@@ -189,7 +189,7 @@ let currentDay=0
                             event.name
                         ).addTo(dateElem.child(0))
 
-                        if(event.endDate){
+                        if(event.endDate && event.rrule==undefined){
 
                             let [startDay,startMonth,startYear]=event.date.split('-')
                             let [endDay,endMonth,endYear]=event.endDate.split('-')
@@ -305,10 +305,20 @@ $el('#event-title').on('input',()=>{
     selectedEvent.name=$el('#event-title').elem.innerText
     localforage.setItem('events',events.value)
 })
-
+//supershitmarker
 $el('#endDateInp').on('change',()=>{
-    selectedEvent.endDate=$el('#endDateInp').elem.value
+    let actor=selectedEvent
+    let isCloned=false
+    if(selectedEvent.isClonedDuplicate){
+        actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
+        isCloned=true
+        
+    }
+    actor.endDate=$el('#endDateInp').elem.value
     
+    if(isCloned){
+        alert('please re apply the repeating to see the changes')
+    }
     localforage.setItem('events',events.value)
     loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
 
@@ -558,12 +568,14 @@ function openEvent(te){
     offCanvasEvent.elem.classList.add('show')
     
     updateMenus(true) //closing all 
-    
+    let isCloned=false
+    let actor=te
 
     if(te.rrule!=undefined || te.isClonedDuplicate){
-        let actor=te
+        
         if(te.isClonedDuplicate){
             actor=events.value.filter(t=>t.id==te.isClonedDuplicate)[0]
+            isCloned=true
         }
         if(actor.rrule.includes('DAILY')){
             roption.value='daily'
@@ -580,7 +592,7 @@ function openEvent(te){
 
     $el('#event-title').elem.innerText=te.name
     $el('#startDateInp').elem.value=te.date
-    $el('#endDateInp').elem.value=te.endDate ||''
+    $el('#endDateInp').elem.value=te.endDate || isCloned ? actor.endDate :''
 
     $el('#event-icon-inp').elem.value=te.icon || ''
 
@@ -1574,12 +1586,13 @@ $el("#daily-set").on("click",()=>{
   }
 
   if(actor.endDate){
-    let endDate=actor.split('-')
+    let endDate=actor.endDate.split('-')
     option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
    }
    
   
   actor.rrule=RRule.optionsToString(option)
+  console.log(actor.rrule)
   localforage.setItem("events",events.value)
   console.log("successfully added rrule to this event ")
   loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
@@ -1605,7 +1618,7 @@ $el("#weekly-set").on("click",()=>{
    }
 
    if(actor.endDate){
-    let endDate=actor.split('-')
+    let endDate=actor.endDate.split('-')
     option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
    }
    
@@ -1631,7 +1644,7 @@ $el("#monthly-set").on("click",()=>{
     }
 
     if(actor.endDate){
-        let endDate=actor.split('-')
+        let endDate=actor.endDate.split('-')
         option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
        }
        
@@ -1656,8 +1669,8 @@ $el("#yearly-set").on("click",()=>{
           actor=events.value.filter(t=>t.id==selectedEvent.isClonedDuplicate)[0]
       }
       if(actor.endDate){
-        let endDate=actor.split('-')
-        option.until=new Date(endDate[2],endDate[1]-1,endDate[0])
+        let endDate=actor.endDate.split('-')
+        option.until=new Date(Date.UTC(endDate[2],endDate[1]-1,endDate[0],0,0))
        }
        
       
