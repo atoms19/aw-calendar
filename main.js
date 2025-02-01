@@ -592,7 +592,7 @@ function openEvent(te){
 
     $el('#event-title').elem.innerText=te.name
     $el('#startDateInp').elem.value=te.date
-    $el('#endDateInp').elem.value=te.endDate || isCloned ? actor.endDate :''
+    $el('#endDateInp').elem.value=te.endDate || isCloned ? actor.endDate?actor.endDate:'' :''
 
     $el('#event-icon-inp').elem.value=te.icon || ''
 
@@ -1691,15 +1691,17 @@ $el('#event-icon-inp').on('change',(e)=>{
 //-------------------------------tracker overview and tracking for habbits  ----------------------------------------------
 
 function trackers(){
-
+    
 
     let trackerAvailed=derived(()=>events.value.filter(e=>e.rrule!=undefined && e.subtasks.length))
+
+    
 
     $el("#tv").forEvery(trackerAvailed,tracker=>{
         return details({class:'details'},
             summary(tracker.name ,{class:'summary'}),
 
-            trackedHabitData(tracker.subtasks)
+            trackedHabitData(tracker.subtasks,tracker.rrule)
 
         );
     })
@@ -1707,22 +1709,23 @@ function trackers(){
 }
 
 
-function trackedHabitData(tasksState){
+function trackedHabitData(tasksState,rrule){
     if(!tasksState) return 
 
     let trackedHabits=state(tasksState)
 
     let body= tbody({class:''}).forEvery(trackedHabits,habit=>{
         if(habit.SectionName) return 
-        let [total,monthly]=calculateCount(habit.name)
-        return tr(td(habit.name),td(`${monthly}`),td(`${total}`))
+        let [total,monthly,streak]=calculateCount(habit.name,rrule)
+        return tr(td(habit.name),td(`${streak}`),td(`${monthly}`),td(`${total}`))
     })
 
 
     return table({class:'table table-striped'},
         thead(
             tr({class:'table-primary'},
-            th("habbit"),
+            th("tracked"),
+            th('streak'),
             th("this month"),
             th("total")
             )
@@ -1734,27 +1737,66 @@ function trackedHabitData(tasksState){
 }
 
 
-function calculateCount(habitName){
+function calculateCount(habitName,rrule){
     let duplicatedInstances=events.value.filter(e=>e.isClonedDuplicate!=undefined).filter(e=>e.isClonedDuplicate)
+    
+
+    let relation=RRule.fromString(rrule)
+    
+
+    
+    // if(!duplicatedInstances) return [9,9,9]
+
+    duplicatedInstances=duplicatedInstances.map(eve=>{
+
+        let [habit]= eve.subtasks.filter(h=>h.name==habitName)
+        if(!habit) return 
+
+
+
+        let [day,month,year]=new String(eve.date).split("-")
+
+        return {
+            habit:habit,
+            date:new Date(year,month-1,day)
+        }
+    }).sort((a,b)=>a.date-b.date)
+    if(!duplicatedInstances[0]) return [0,0,0]
+    
     let habitCount=0 
     let monthOnlyCount=0
-    
-    duplicatedInstances.forEach(eve=>{
-        let [_,month,year]=eve.date.split('-')
+    let streak=0
+
+    duplicatedInstances.forEach((eve,i,eves)=>{
+
+        if (eve ==undefined){
+            return [0,0,0]
+        }
         
-        eve.subtasks.forEach(hab=>{
-            
-           if(hab.done && hab.name==habitName){
+
+        
+
+           if(eve.habit.done){
             habitCount+=1
-            if((month==currentDate.getMonth()+1) && (year==currentDate.getFullYear())){
+
+            if(eve.date.getMonth()==currentDate.getMonth() && eve.date.getFullYear()==currentDate.getFullYear()){
                 monthOnlyCount+=1
+                    
+           }  
+
+           if(i > 0 && eves[i-1].habit.done ){ 
+                console.log(eve.date-eves[i-1].date) 
+                streak+=1
+            }else{
+                streak=1
             }
-    
-           }
-        })  
-        
-    })
-    return [habitCount,monthOnlyCount]
+            
+    }
+
+
+})
+
+    return [habitCount,monthOnlyCount,streak]
 
 }
 
