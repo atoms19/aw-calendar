@@ -1693,7 +1693,7 @@ $el('#event-icon-inp').on('change',(e)=>{
 function trackers(){
     
 
-    let trackerAvailed=derived(()=>events.value.filter(e=>e.rrule!=undefined && e.subtasks.length))
+    let trackerAvailed=derived(()=>events.value.filter(e=>e.rrule!=undefined && e.subtasks.length).reverse())
 
     
 
