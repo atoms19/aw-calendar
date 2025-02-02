@@ -228,3 +228,7 @@ background-color: #10111256;
 
     
 }
+
+table{
+    overflow-x: scroll !important;
+}
