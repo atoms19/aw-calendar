@@ -11,7 +11,7 @@ app.use(cors())
 
 app.use(express.static(path.join(__dirname,'../frontend/dist')))
 app.get("/",(req,res)=>res.send("Express on Vercel"))
-app.get("/jokes",(req,res)=>res.json({
+app.get("/api/jokes",(req,res)=>res.json({
 
     "app":"redicer",
     "author":"atoms"
