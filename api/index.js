@@ -11,7 +11,11 @@ app.use(cors())
 
 app.use(express.static(path.join(__dirname,'../frontend/dist')))
 app.get("/",(req,res)=>res.send("Express on Vercel"))
-app.get("/jokes",(req,res)=>res.send("smota bota lota smota"))
+app.get("/jokes",(req,res)=>res.json({
+
+    "app":"redicer",
+    "author":"atoms"
+}))
 
 
 app.listen(PORT,()=>{
