@@ -35,6 +35,7 @@ export const removeFormatting = (formattedValue) => {
       
       let vevents=component.getAllSubcomponents("vevent").map((event) => {
         const vevent = new ICAL.Event(event);
+
         let eventCAN= {
           id: vevent.uid,
           name : vevent.summary,
@@ -44,7 +45,10 @@ export const removeFormatting = (formattedValue) => {
           location:undefined,
           date: `${vevent.startDate._time.day}-${vevent.startDate._time.month}-${vevent.startDate._time.year}`,
           endDate:undefined,
+          rrule:vevent.isRecurring?'FREQ='+Object.keys(vevent.getRecurrenceTypes())[0]:undefined,
+
         };
+
         let endDate=`${vevent.endDate._time.day}-${vevent.endDate._time.month}-${vevent.endDate._time.year}`
 
         if(eventCAN.date!=endDate){

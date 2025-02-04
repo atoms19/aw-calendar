@@ -990,6 +990,8 @@ $el('#curr-inp').attr('value',currency.value).on('change',(e)=>{
     localStorage.setItem('currency-marker',currency.value)
     
 })
+  
+$el('#curr-inp').value=localStorage.getItem('currency-marker')| "$"
 
 
 
