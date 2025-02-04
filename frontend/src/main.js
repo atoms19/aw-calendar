@@ -159,8 +159,11 @@ let currentDay=0
          })
         dateElem.on('drop',(e)=>{
          console.log('dropped ')
+         
          let id=e.dataTransfer.getData('text/plain')
-         events.value.filter((e)=>e.id==id)[0].date=`${i-startat+1}-${month+1}-${year}`
+         let eve=events.value.filter((e)=>e.id==id)[0]
+        if(eve.endDate) return 
+         eve.date=`${i-startat+1}-${month+1}-${year}`
          localforage.setItem('events',events.value)
          loadCurrentMonth(year,month)
          updateEventList()
@@ -724,9 +727,9 @@ e.preventDefault()
 
 $el('#section-btn').on('click',()=>{
     selectedEvent.subtasks.push({
-        SectionName:taskname.value || 'new section',
-        
+        SectionName:taskname.value || 'new section',  
     })
+    taskname.value=''
     updateTaskList()
 })
 
