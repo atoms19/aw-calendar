@@ -1,25 +1,18 @@
-const express = require("express")
-const path=require("path")
-const cors=require("cors")
+import { Hono } from "hono";
+import { handle } from "hono/vercel";
 
 
+export const runtime="nodejs"
 
-const PORT=3000
-let app =express()
 
-app.use(cors())
+const app=new Hono().basePath('/api')
 
-app.use(express.static(path.join(__dirname,'../frontend/dist')))
-
-app.get("/",(req,res)=>res.send("Express on Vercel"))
-
-app.listen(PORT,()=>{
-    console.log("server running .... at http://localhost:"+PORT)
+app.get('/hello',(c)=>{
+    return c.text("hey baby ")
 })
 
-
-export default app;
-
+export const GET=handle(app)
+export const POST=handle(app)
 
 
 
