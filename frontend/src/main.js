@@ -477,38 +477,14 @@ function updateEventList(){
                         i({class:'bi bi-trash'})
                     ).on('click',(e)=>{
                         e.stopPropagation()
-                        if(te.isDuplicate || te.isClonedDuplicate){
-                            let s=confirm("remove data from this instance ?")
-                            if(s){
-                                events.value=events.value.filter((e)=>e.id!=te.id)
-                                localforage.setItem('events',events.value)
-                                updateEventList()
-                                loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-                            }else{
-                                let s2=confirm("remove all non information containign instances of this event including this (can't be undone)  ?")
-                                if(s2){
-                                    events.value=events.value.filter((e)=>e.id!=te.isDuplicate)
-                                    localforage.setItem('events',events.value)
-                                    updateEventList()
-                                    loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-                                }else{
-                                    let s2=confirm("remove data from  all informative instances of this event including this (can't be undone)  ?")
-                                    if(s2){
-                                        events.value=events.value.filter((e)=>e.isClonedDuplicate!=te.isClonedDuplicate)
-                                        localforage.setItem('events',events.value)
-                                        updateEventList()
-                                        loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-                                    }
-                                }
-
-                            }
-                        }
                         events.value=events.value.filter((e)=>e.id!=te.id)
                         localforage.setItem('events',events.value)
                         updateEventList()
                        
                         loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
                         
+                    }).css({
+                        opacity:te.isDuplicate?'0':'1'
                     })
                 )
             
