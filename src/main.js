@@ -1,6 +1,6 @@
  import {input,label,$el,$$el,effect,state,tr,td,div,span,h4,li,button,i, a,option, h2, canvas, derived, details,summary,DominityElement, h1, ul, table, tbody, thead, th} from "dominity"
-import swipeDetector from "../public/lib/swipe"
-import { formatMoney, parseICS, removeFormatting } from "../public/lib/utils"
+import swipeDetector from "../lib/swipe"
+import { formatMoney, parseICS, removeFormatting } from "../lib/utils"
 import { ArcElement, BarController, Chart, Legend, PieController, PolarAreaController, RadialLinearScale, Tooltip } from "chart.js"
 import { marked } from "marked"
 import markedKatex from "marked-katex-extension"
@@ -1781,3 +1781,10 @@ function calculateCount(habitName,rrule){
 
 }
 
+
+
+let datee=new Date().getTime()
+let percentage=(datee/86400000)*100
+$el("#daybar").css({
+    width:percentage/10000+'%',
+})

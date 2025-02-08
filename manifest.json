@@ -1,0 +1,29 @@
+{
+    "short_name":"aw-calendar",
+      "name":"aw-calendar",
+      "id":"/",
+      "start_url":"index.html",
+      "description":"minimalist daily planer",
+      "display":"standalone",
+      "background_color":"#ffffff",
+      "theme_color":"#222222",
+     "icons":[{"src":"./icons/androidicon.png","sizes":"192x192","type":"image/png"},{"src":"./icons/iosicon.png","sizes":"512x512","type":"image/png"}],
+     "screenshots":[{
+      "src": "screenshots/bigscreen.png",
+      "sizes": "1560x884",
+      "form_factor":"wide",
+      "type": "image/png"
+    },
+      {
+        "src": "screenshots/desktop.png",
+        "sizes": "1282x760",
+        "type": "image/png"
+      },
+      {
+        "src": "screenshots/phone.png",
+        "sizes": "479x939",
+        "type": "image/png"
+      }
+    ]
+    
+}
