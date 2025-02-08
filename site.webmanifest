@@ -2,7 +2,7 @@
     "short_name":"aw-calendar",
       "name":"aw-calendar",
       "id":"/",
-      "start_url":"index.html",
+      "start_url":"/",
       "description":"minimalist daily planer",
       "display":"standalone",
       "background_color":"#ffffff",
