@@ -1782,9 +1782,3 @@ function calculateCount(habitName,rrule){
 }
 
 
-
-let datee=new Date().getTime()
-let percentage=(datee/86400000)*100
-$el("#daybar").css({
-    width:percentage/10000+'%',
-})
