@@ -1,14 +1,14 @@
 {
-    "short_name":"aw-calendar",
-      "name":"aw-calendar",
+    "short_name":"awalendar",
+      "name":"awkalendar",
       "id":"/",
       "start_url":"/",
       "description":"minimalist daily planer",
       "display":"standalone",
       "background_color":"#ffffff",
       "theme_color":"#222222",
-     "icons": [{"src":"icons/favicon_io/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/icons/favicon_io/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}]
-     ,"screenshots":[{
+     "icons":[{"src":"./icons/androidicon.png","sizes":"192x192","type":"image/png"},{"src":"./icons/iosicon.png","sizes":"512x512","type":"image/png"}],
+     "screenshots":[{
       "src": "screenshots/bigscreen.png",
       "sizes": "1560x884",
       "form_factor":"wide",
