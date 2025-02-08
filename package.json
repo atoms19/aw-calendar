@@ -13,9 +13,5 @@
     "marked-highlight": "^2.2.1",
     "marked-katex-extension": "^5.1.4",
     "rrule": "^2.1.0"
-  },
-  "scripts": {
-    "start": "node backend/server.js",
-    "build": "cd frontend && npx vite build"
   }
 }
