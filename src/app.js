@@ -973,7 +973,7 @@ $el('#dark-theme-btn',' :',isDarkMode).on('click',()=>{
 })
 
 let themeName=state(localStorage.getItem('custom-themeName')||'litera')
-let themes=['litera','vapor','sandstone','lux','quartz','minty','sketchy','yeti','solar','zephyr','slate','simplex','morph','journal','cerulean','cosmo','cyborg','flatly','lumen','darkly','pulse','superhero','materia']
+let themes=['litera','vapor','lux','minty','yeti','solar','simplex','morph','journal','cerulean','cosmo','cyborg','flatly','lumen','darkly','pulse','superhero']
 let itheme=themes.indexOf(themeName.value)
 
 $el('#theme-btn',' :',themeName).on('click',()=>{
