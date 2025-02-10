@@ -1,6 +1,6 @@
 {
-  "short_name": "awalendar",
-  "name": "awkalendar",
+  "short_name": "aw calendar",
+  "name": "atom calendar",
   "icons": [
     {
       "src": "./icons/androidicon.png",
@@ -14,7 +14,7 @@
     }
   ],
   "start_url": "/",
-  "description": "Minimalist daily planner",
+  "description": "Minimalist all in one daily planner , money manager , habit tracker and calnendar",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#222222",
