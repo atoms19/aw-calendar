@@ -227,3 +227,6 @@ background-color: #10111256;
 
     
 }
+.list-group-item{ 
+    color:var(--bs-list-group-color) !important;
+}
