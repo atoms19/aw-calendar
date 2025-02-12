@@ -655,7 +655,7 @@ fb.on('swipedown',monthDown)
 let menuView=state('')
 
 $el("#loc-btn").on("click",()=>{
-    pickerMapLocationSet()
+    if(!selectedEvent.location ) pickerMapLocationSet() 
 })
 
 
