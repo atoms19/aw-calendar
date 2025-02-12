@@ -1782,7 +1782,7 @@ function calculateCount(habitName,rrule){
 
 
 
-// i ran out of time and had to use ai to generate these bits 
+// something i couldve done myself again just lazy 
 
 async function generateBackup() {
     
