@@ -78,9 +78,11 @@
                   <li><a class="dropdown-item" href="#"  id="curr-inp">Currency : <input type="text" style='width:1rem;' class="scary-ghost-input"></a></li>
                   <li class="dropdowntoggle" for="data-more"><a class="dropdown-item"  href="#">Export Import</a></li>
                   <ul class="dropdown-menu dropdown-end " id="data-more">
-                    <li><a class="dropdown-item" href='#' id='import-button'>Import data : <input type='file' accept=".ics" name="fileics"  class='form-control' id="ics-select" style="width:rem"/> </a></li>
-                    <li><a class="dropdown-item" href="#">Air throw</a></li>
-                    <li><a class="dropdown-item" href="#">Air fetch</a></li>
+                    <li><a class="dropdown-item" href='#' id='import-button'>Import from ics: <input type='file' accept=".ics" name="fileics"  class='form-control' id="ics-select" style="width:rem"/> </a></li>
+                    <li><a class="dropdown-item" href='#'>Import from backup : <input type='file' accept=".json" name="fileics"  class='form-control' id="backup-select" style="width:rem"/> </a></li>
+                    
+                    <li><a class="dropdown-item " href="#" id="backup-btn">create backup</a></li>
+                    <li><a class="dropdown-item d-none" href="#">Air fetch</a></li>
                   </ul>
 
                 </ul>
@@ -172,14 +174,14 @@
                   <li><a class="dropdown-item" href="#" id="weekly-set">weekly this day</a></li>
                   <li><a class="dropdown-item" href="#" id="monthly-set">Monthly on this date</a></li>
                   <li><a class="dropdown-item" href="#" id="yearly-set">yearly on this date</a></li>
-                  <li><a class="dropdown-item" href="#">custom</a></li>
+                  <li><a class="dropdown-item d-none" href="#">custom</a></li>
               </ul>
-                <li><a class="dropdown-item dropdowntoggle" for="reminders" href="#" id="reminder-btn">Remind me</a></li>
+                <li><a class="dropdown-item d-none dropdowntoggle" for="reminders" href="#" id="reminder-btn">Remind me</a></li>
                 <ul class="dropdown-menu  dropdown" id="reminders" >
                     <li><a class="dropdown-item "><input class="form-control form-control-sm" type="datetime-local" id="reminder-time"/></a></li>
                     <li class=""><button class="m-1 ml-3 btn btn-primary btn-sm" id="reminder-btn-set">set reminder</button></li>
                 </ul>
-                <li><a class="dropdown-item" href="#">Lock event</a></li>
+                <li><a class="dropdown-item d-none" href="#">Lock event</a></li>
                 <li><a class="dropdown-item" href="#">Icon <input type="text" style='width:rem;' id='event-icon-inp' class="scary-ghost-input"></a></li>
 
 

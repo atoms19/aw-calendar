@@ -1006,10 +1006,6 @@ $el('#ics-select').on('change',async(e)=>{
     events.value=[...events.value,...parseICS(data)]
     localforage.setItem('events',events.value)
 loadCurrentMonth(currentDate.getFullYear(),currentDate.getMonth())
-
-    
-
-
 })
 
 //----------------------------------expense tracker ---------------------------------------------------
@@ -1785,3 +1781,76 @@ function calculateCount(habitName,rrule){
 }
 
 
+
+// i ran out of time and had to use ai to generate these bits 
+
+async function generateBackup() {
+    
+    const events = await localforage.getItem('events') || [];
+    const categories = await localforage.getItem('categories') || [];
+    
+    // Create backup data
+    const data = JSON.stringify({ events, categories });
+
+    const now = new Date();
+    const monthName = now.toLocaleString('default', { month: 'long' });
+    const year = now.getFullYear();
+    
+    // Create a filename with month and year
+    const filename = `backup_${monthName}_${year}.json`;
+    
+    
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Check if a month has passed since the last backup
+function checkAndGenerateBackup() {
+    const lastBackup = localStorage.getItem('lastBackup');
+    const now = new Date();
+    if (!lastBackup || (now - new Date(lastBackup)) > 30 * 24 * 60 * 60 * 1000) {
+        generateBackup();
+        localStorage.setItem('lastBackup', now.toISOString());
+    }
+}
+
+// Call this function when the app loads
+checkAndGenerateBackup();
+
+async function loadBackup(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.events) {
+                await localforage.setItem('events', data.events);
+            }
+            if (data.categories) {
+                await localforage.setItem('categories', data.categories);
+            }
+            alert('Backup loaded successfully!');
+        } catch (error) {
+            console.error('Error loading backup:', error);
+            alert('Failed to load backup. Please make sure the file is correct.');
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+
+// Add event listener to the file input
+document.getElementById('backup-select').addEventListener('change', loadBackup);
+document.getElementById('backup-btn').addEventListener('click', generateBackup);
