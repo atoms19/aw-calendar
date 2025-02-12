@@ -230,6 +230,6 @@ background-color: #10111256;
 .list-group-item{ 
     color:var(--bs-list-group-color) !important;
 }
-.table td, .table th {
-    padding: 0.75rem !important;
+body[theme='lux'] .table td, body[theme='lux'] .table th {
+    padding: 0.25rem !important;
 }
