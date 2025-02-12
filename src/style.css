@@ -237,3 +237,7 @@ body[theme='lux'] .table td, body[theme='lux'] .table th {
 body[theme='lux']{
     --bs-heading-color:43434 !important;
 }
+body[theme='minty'] .btn.btn-ghost{
+    color:var(--bs-heading-color);
+
+}
