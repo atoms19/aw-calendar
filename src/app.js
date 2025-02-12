@@ -654,7 +654,9 @@ fb.on('swipedown',monthDown)
 
 let menuView=state('')
 
-
+$el("#loc-btn").on("click",()=>{
+    pickerMapLocationSet()
+})
 
 
 $$el('[name="menu-options').forEach(elem=>{
@@ -980,6 +982,7 @@ $el('#theme-btn',' :',themeName).on('click',()=>{
     localStorage.setItem('custom-themeName',themes[itheme%themes.length])
     themeName.value=themes[itheme%themes.length]
     $el('#theme-shifter').attr('href','https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/'+themeName.value+'/bootstrap.min.css')
+    document.body.setAttribute("theme",themes[itheme%themes.length])
     itheme+=1
 })
 
@@ -1493,7 +1496,7 @@ $el('#remove-pin').on('click',()=>{
     openEvent(selectedEvent)
    // pickerMapLocationSet()
 })
-pickerMapLocationSet()
+
 
 
 $el('#search-wrap').on('click',(e)=>$el('#search-wrap').elem.classList.add('d-none'))
